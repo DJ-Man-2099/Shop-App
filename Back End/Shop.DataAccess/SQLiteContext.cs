@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Shop.Models;
 
 namespace Shop.DataAccess;
@@ -11,12 +12,11 @@ public class SQLiteContext : IdentityDbContext<User, IdentityRole<int>, int>
 
 	protected readonly IConfiguration? Configuration;
 
-	public SQLiteContext(IConfiguration configuration)
+	public SQLiteContext(IConfiguration? configuration = null, DbContextOptions<SQLiteContext>? options = null) : base(options!)
 	{
 		Configuration = configuration;
 	}
 
-	public SQLiteContext(DbContextOptions<SQLiteContext> options) : base(options) { }
 
 	// Default constructor (For migrations)
 	public SQLiteContext()

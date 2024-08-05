@@ -17,4 +17,8 @@
     <ProjectReference Include="..\Shop.Models\Shop.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+     <InternalsVisibleTo Include="Shop.Testing" />
+  </ItemGroup>
+
 </Project>

@@ -9,8 +9,7 @@ public class BaseUnitTest
 	protected readonly SQLiteContext _context;
 	public BaseUnitTest()
 	{
-
-		_context = new(TestDBConnection.GetConnection());
+		_context = new(options: TestDBConnection.GetConnection());
 		_context.Database.EnsureDeleted();
 		_context.Database.Migrate(); // Apply migrations
 	}
