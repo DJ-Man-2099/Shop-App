@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 
-import { BaseCategoryInfo } from '../interfaces/category';
+import { BaseCategoryInfo, Category, FormKeys } from '../interfaces/category';
 
 @Injectable({
   providedIn: 'root',
@@ -25,6 +25,15 @@ export class CategoryService {
           observe: 'response',
         }
       )
+    );
+  }
+
+  addBaseCategory(baseCategory: Category) {
+    console.log(baseCategory);
+    return firstValueFrom(
+      this.http.post<BaseCategoryInfo>('api/Category', baseCategory, {
+        observe: 'response',
+      })
     );
   }
 }

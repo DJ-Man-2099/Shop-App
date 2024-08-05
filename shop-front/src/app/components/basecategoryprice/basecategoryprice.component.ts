@@ -1,8 +1,14 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 
 import { CategoryService } from '../../Services/category.service';
-import { BaseCategoryInfo } from '../../interfaces/category';
+import { BaseCategoryInfo, FormKeys } from '../../interfaces/category';
 
 @Component({
   selector: 'app-basecategoryprice',
@@ -12,15 +18,37 @@ import { BaseCategoryInfo } from '../../interfaces/category';
   styleUrl: './basecategoryprice.component.css',
 })
 export class BasecategorypriceComponent implements OnInit {
-  baseCategory!: BaseCategoryInfo;
+  baseCategory?: BaseCategoryInfo;
   baseCategoryPrice!: number;
+  isLoading = true;
+
+  newBaseCategoryForm!: FormGroup;
+  newBaseCategoryFormControlNames!: FormKeys[];
 
   constructor(
     private categoryService: CategoryService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
+    this.newBaseCategoryForm = this.fb.group({
+      Name: ['', Validators.required],
+      Standard: [0, [Validators.required, Validators.min(0)]],
+      Price: [0, [Validators.required, Validators.min(0)]],
+    });
+    this.newBaseCategoryFormControlNames = Object.keys(
+      this.newBaseCategoryForm.controls
+    ).reduce<FormKeys[]>((acc, key) => {
+      const type =
+        typeof this.newBaseCategoryForm.controls[key].value === 'string'
+          ? 'text'
+          : 'number';
+      const name =
+        key === 'Name' ? 'اسم العيار' : key === 'Standard' ? 'العيار' : 'السعر';
+      acc.push({ key, type, name });
+      return acc;
+    }, []);
     this.categoryService.getBaseCategory().subscribe({
       next: (response) => {
         if (response.body) {
@@ -33,11 +61,29 @@ export class BasecategorypriceComponent implements OnInit {
         } else {
           console.error('Response body is null');
         }
+        this.isLoading = false;
       },
       error: (error) => {
         console.error(error);
+        this.isLoading = false;
       },
     });
+  }
+
+  async onSubmit(): Promise<void> {
+    if (this.newBaseCategoryForm.valid) {
+      const response = await this.categoryService.addBaseCategory(
+        this.newBaseCategoryForm.value
+      );
+      if (response.ok) {
+        console.log(response.body);
+        this.baseCategory = {
+          standard: response.body!.standard,
+          price: response.body!.price,
+        };
+        this.baseCategoryPrice = this.baseCategory.price;
+      }
+    }
   }
 
   resetBaseCategoryPrice(): void {
