@@ -1,4 +1,6 @@
 using System;
+using Microsoft.EntityFrameworkCore;
+using Shop.DataAccess;
 
 namespace Shop.Testing.Helpers;
 
@@ -12,5 +14,16 @@ public class BaseIntegrationTest : IClassFixture<BaseWebAppFactory>
 	{
 		_factory = factory;
 		_client = _factory.CreateClient();
+		ResetDatabase();
+	}
+
+	protected void ResetDatabase()
+	{
+		using (var scope = _factory.Services.CreateScope())
+		{
+			var db = scope.ServiceProvider.GetRequiredService<SQLiteContext>();
+			db.Database.EnsureDeleted();
+			db.Database.Migrate();
+		}
 	}
 }

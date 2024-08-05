@@ -36,6 +36,7 @@ public class CategoryController : ControllerBase
 	}
 
 	[HttpPost]
+	[HttpPatch("{id}")]
 	public async Task<IActionResult> UpsertCategory(InputCategory category, int? id)
 	{
 		var result = await _categoriesService.UpsertCategoryAsync(category, id);

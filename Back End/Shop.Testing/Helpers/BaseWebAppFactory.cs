@@ -30,8 +30,6 @@ public class BaseWebAppFactory : WebApplicationFactory<Program>
 				var context = new SQLiteContext(options: new DbContextOptionsBuilder<SQLiteContext>()
 					.UseSqlite(connection)
 					.Options);
-				context.Database.EnsureDeleted();
-				context.Database.Migrate();
 				return context;
 			});
 
