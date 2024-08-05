@@ -2,7 +2,7 @@ namespace Shop.Testing.Helpers;
 
 public static class TestConfiguration
 {
-	private static IConfigurationRoot _configuration;
+	private static IConfigurationRoot? _configuration;
 	public static IConfigurationRoot GetConfiguration()
 	{
 		if (_configuration != null)
