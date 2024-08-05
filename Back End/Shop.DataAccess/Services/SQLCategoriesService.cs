@@ -22,6 +22,14 @@ public class SQLCategoriesService : ICategoriesService
 	public async Task<OpResult<Category>> GetCategoryAsync(int id)
 	{
 		var category = await _context.Categories.FindAsync(id);
+		if (category == null)
+		{
+			return new OpResult<Category>
+			{
+				Succeeded = false,
+				Errors = new Dictionary<string, string> { { "Id", "Category not found" } }
+			};
+		}
 		return new OpResult<Category> { Value = category };
 	}
 
@@ -39,6 +47,22 @@ public class SQLCategoriesService : ICategoriesService
 
 	private async Task<OpResult<Category>> AddNew(InputCategory category)
 	{
+		if (string.IsNullOrEmpty(category.Name))
+		{
+			return new OpResult<Category>
+			{
+				Succeeded = false,
+				Errors = new Dictionary<string, string> { { "Name", "Name is required" } }
+			};
+		}
+		if (!category.Standard.HasValue)
+		{
+			return new OpResult<Category>
+			{
+				Succeeded = false,
+				Errors = new Dictionary<string, string> { { "Standard", "Standard is required" } }
+			};
+		}
 		var baseCategory = await _context.Categories.FirstOrDefaultAsync(c => c.IsPrimary);
 		float price;
 		bool isPrimary = baseCategory == null;
@@ -48,6 +72,7 @@ public class SQLCategoriesService : ICategoriesService
 			{
 				return new OpResult<Category>
 				{
+					Succeeded = false,
 					Errors = new Dictionary<string, string> { { "Price", "Price is required" } }
 				};
 			}
@@ -55,17 +80,28 @@ public class SQLCategoriesService : ICategoriesService
 		}
 		else
 		{
-			price = baseCategory.Price * category.Standard / baseCategory.Standard;
+			price = baseCategory.Price * category.Standard.Value / baseCategory.Standard;
 		}
 		var newCategory = new Category
 		{
 			Name = category.Name,
-			Standard = category.Standard,
+			Standard = category.Standard.Value,
 			Price = price,
 			IsPrimary = isPrimary
 		};
 		_context.Categories.Add(newCategory);
-		await _context.SaveChangesAsync();
+		try
+		{
+			await _context.SaveChangesAsync();
+		}
+		catch (DbUpdateException)
+		{
+			return new OpResult<Category>
+			{
+				Succeeded = false,
+				Errors = new Dictionary<string, string> { { "Standard", $"Category with Standard: {category.Standard} already exists" } }
+			};
+		}
 		return new OpResult<Category> { Value = newCategory };
 	}
 
@@ -76,21 +112,51 @@ public class SQLCategoriesService : ICategoriesService
 		{
 			return new OpResult<Category>
 			{
+				Succeeded = false,
 				Errors = new Dictionary<string, string> { { "Id", "Category not found" } }
 			};
 		}
-		existingCategory.Name = category.Name;
-		existingCategory.Standard = category.Standard;
-		if (existingCategory.IsPrimary && category.Price != existingCategory.Price)
+		existingCategory.Name = category.Name ?? existingCategory.Name;
+		if (existingCategory.IsPrimary)
 		{
-			existingCategory.Price = category.Price ?? existingCategory.Price;
-			var categories = await _context.Categories.Where(c => !c.IsPrimary).ToListAsync();
-			foreach (var c in categories)
+			// Update all other categories if price or standard has changed
+			if ((category.Price.HasValue && category.Price != existingCategory.Price) ||
+			(category.Standard.HasValue && category.Standard != existingCategory.Standard))
 			{
-				c.Price = category.Price!.Value * c.Standard / existingCategory.Standard;
+				existingCategory.Standard = category.Standard ?? existingCategory.Standard;
+				existingCategory.Price = category.Price ?? existingCategory.Price;
+				var categories = await _context.Categories.Where(c => !c.IsPrimary).ToListAsync();
+				foreach (var c in categories)
+				{
+					c.Price = category.Price!.Value * c.Standard / existingCategory.Standard;
+				}
 			}
+
 		}
-		await _context.SaveChangesAsync();
+		else
+		{
+			if (category.Standard.HasValue
+				&& category.Standard != existingCategory.Standard)
+			{
+				//update price as well
+				existingCategory.Standard = category.Standard.Value;
+				var baseCategory = await _context.Categories.FirstAsync(c => c.IsPrimary);
+				existingCategory.Price = baseCategory.Price * category.Standard.Value / baseCategory.Standard;
+			}
+
+		}
+		try
+		{
+			await _context.SaveChangesAsync();
+		}
+		catch (DbUpdateException)
+		{
+			return new OpResult<Category>
+			{
+				Succeeded = false,
+				Errors = new Dictionary<string, string> { { "Standard", $"Category with Standard: {category.Standard} already exists" } }
+			};
+		}
 		return new OpResult<Category> { Value = existingCategory };
 	}
 }
