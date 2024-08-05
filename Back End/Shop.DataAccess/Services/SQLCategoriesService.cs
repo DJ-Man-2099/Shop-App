@@ -13,6 +13,35 @@ public class SQLCategoriesService : ICategoriesService
 		_context = context;
 	}
 
+	public async Task<OpResult<Category>> GetBaseCategoryAsync()
+	{
+		var category = await _context.Categories.FirstOrDefaultAsync(c => c.IsPrimary);
+		if (category == null)
+		{
+			return new OpResult<Category>
+			{
+				Succeeded = false,
+				Errors = new Dictionary<string, string> { { "Base", "Base Category not found" } }
+			};
+		}
+		return new OpResult<Category> { Value = category };
+	}
+
+	public async Task<OpResult<Category>> SetBaseCategoryPriceAsync(float price)
+	{
+		var category = await _context.Categories.FirstOrDefaultAsync(c => c.IsPrimary);
+		if (category == null)
+		{
+			return new OpResult<Category>
+			{
+				Succeeded = false,
+				Errors = new Dictionary<string, string> { { "Base", "Base Category not found" } }
+			};
+		}
+		var tempCategory = new InputCategory { Price = price };
+		return await UpdateExisting(tempCategory, category.Id);
+	}
+
 	public async Task<OpResult<IEnumerable<Category>>> GetCategoriesAsync()
 	{
 		var categories = await _context.Categories.ToListAsync();

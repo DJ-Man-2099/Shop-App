@@ -24,7 +24,18 @@ public class CategoryController : ControllerBase
 		return Ok(result.Value!);
 	}
 
-	[HttpGet("{id}")]
+	[HttpGet("base")]
+	public async Task<IActionResult> GetBaseCategory()
+	{
+		var result = await _categoriesService.GetBaseCategoryAsync();
+		if (!result.Succeeded)
+		{
+			return NotFound(result.Errors!);
+		}
+		return Ok(result.Value!);
+	}
+
+	[HttpGet("{id:int}")]
 	public async Task<IActionResult> GetCategory(int id)
 	{
 		var result = await _categoriesService.GetCategoryAsync(id);
@@ -36,7 +47,7 @@ public class CategoryController : ControllerBase
 	}
 
 	[HttpPost]
-	[HttpPatch("{id}")]
+	[HttpPatch("{id:int}")]
 	public async Task<IActionResult> UpsertCategory(InputCategory category, int? id)
 	{
 		var result = await _categoriesService.UpsertCategoryAsync(category, id);
@@ -50,4 +61,20 @@ public class CategoryController : ControllerBase
 		}
 	}
 
+	[HttpPatch("base")]
+	public async Task<IActionResult> SetBaseCategoryPrice(PriceUpdateModel price)
+	{
+		Console.WriteLine(price.Price);
+		var result = await _categoriesService.SetBaseCategoryPriceAsync(price.Price);
+		if (!result.Succeeded)
+		{
+			return NotFound(result.Errors!);
+		}
+		return Ok(result.Value!);
+	}
+
+}
+public class PriceUpdateModel
+{
+	public float Price { get; set; }
 }

@@ -9,6 +9,9 @@ public interface ICategoriesService
 
 	Task<OpResult<Category>> GetCategoryAsync(int id);
 
+	Task<OpResult<Category>> GetBaseCategoryAsync();
+	Task<OpResult<Category>> SetBaseCategoryPriceAsync(float price);
+
 	Task<OpResult<Category>> UpsertCategoryAsync(InputCategory category, int? id);
 
 

@@ -13,7 +13,19 @@ builder.Services.AddScoped<ICategoriesService, SQLCategoriesService>();
 builder.Services.AddDbContext<SQLiteContext>(options =>
 options.UseSqlite(builder.Configuration.GetConnectionString("SqliteDatabase")
 ));
+
 builder.Services.AddControllers();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost4200", builder =>
+    {
+        builder
+        .WithOrigins("http://localhost:4200")
+        .AllowAnyHeader()
+        .AllowAnyMethod();
+    });
+});
 
 
 var app = builder.Build();
@@ -48,7 +60,7 @@ app.MapGet("/weatherforecast", () =>
 .WithOpenApi();
 
 app.MapControllers();
-
+app.UseCors("AllowLocalhost4200");
 app.Run();
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
