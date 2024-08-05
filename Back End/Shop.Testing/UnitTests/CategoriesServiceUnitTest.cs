@@ -1,5 +1,6 @@
 using Shop.DataAccess.Services;
 using Shop.Models;
+using Shop.Testing.Helpers;
 using Shouldly;
 
 namespace Shop.Testing;

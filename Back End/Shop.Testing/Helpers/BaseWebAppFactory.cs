@@ -3,17 +3,10 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Shop.DataAccess;
 
-namespace Shop.Testing;
+namespace Shop.Testing.Helpers;
 
 public class BaseWebAppFactory : WebApplicationFactory<Program>
 {
-
-	// private static SqliteConnection GetConnection()
-	// {
-	// 	var connection = new SqliteConnection("Data Source=Integration-Shop-Test.db");
-	// 	return connection;
-	// }
-
 	protected override void ConfigureWebHost(IWebHostBuilder builder)
 	{
 		builder.ConfigureServices((context, services) =>
@@ -30,8 +23,8 @@ public class BaseWebAppFactory : WebApplicationFactory<Program>
 
 			// Add a database context (ApplicationDbContext) as A Scoped Service
 			// using a SQLite database for testing.
-
-			var connection = new SqliteConnection("Data Source=Integration-Shop-Test.db");
+			var config = TestConfiguration.GetConfiguration();
+			var connection = new SqliteConnection(config.GetConnectionString("IntegrationDatabase"));
 			services.AddScoped(provider =>
 			{
 				var context = new SQLiteContext(options: new DbContextOptionsBuilder<SQLiteContext>()

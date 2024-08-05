@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Shop.DataAccess;
 using Shop.Models;
+using Shop.Testing.Helpers;
 using Shouldly;
 
 namespace Shop.Testing;

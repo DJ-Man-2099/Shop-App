@@ -1,6 +1,6 @@
 using System;
 
-namespace Shop.Testing;
+namespace Shop.Testing.Helpers;
 
 public class BaseIntegrationTest : IClassFixture<BaseWebAppFactory>
 {
