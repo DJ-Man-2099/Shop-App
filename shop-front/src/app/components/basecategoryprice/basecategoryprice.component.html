@@ -1,0 +1,16 @@
+<div class="card p-3 gap-3">
+	@if (baseCategoryPrice !=null){
+	<div class="d-flex align-items-center gap-3">
+		<span [style.width]="'fit-content'"> سعر عيار {{baseCategory.standard}} الحالي: </span>
+		<input aria-label="base Price input" [(ngModel)]="baseCategoryPrice" type="number" class="form-control"
+			[style.flex]="1" />
+	</div>
+	<div class="d-flex align-items-center justify-content-between">
+		<button class="col-3 btn btn-primary" (click)="changeBaseCategoryPrice()">حفظ</button>
+		<button class="col-3 btn btn-danger" (click)="resetBaseCategoryPrice()">إلغاء</button>
+	</div>
+	} @else {
+	loading.....
+	}
+
+</div>
