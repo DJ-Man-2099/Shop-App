@@ -5,6 +5,13 @@ using Shop.DataAccess.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+void ApplyMigrations(IApplicationBuilder app)
+{
+    using var scope = app.ApplicationServices.CreateScope();
+    var context = scope.ServiceProvider.GetRequiredService<SQLiteContext>();
+    context.Database.Migrate();
+}
+
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -13,6 +20,9 @@ builder.Services.AddScoped<ICategoriesService, SQLCategoriesService>();
 builder.Services.AddDbContext<SQLiteContext>(options =>
 options.UseSqlite(builder.Configuration.GetConnectionString("SqliteDatabase")
 ));
+
+// Apply migrations
+
 
 builder.Services.AddControllers();
 
@@ -30,6 +40,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+ApplyMigrations(app);
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
