@@ -33,7 +33,7 @@ public class SQLCategoriesService : ICategoriesService
 		return new OpResult<Category> { Value = category };
 	}
 
-	public async Task<OpResult<Category>> UpsertCategoryAsync(InputCategory category, int? id)
+	public async Task<OpResult<Category>> UpsertCategoryAsync(InputCategory category, int? id = null)
 	{
 		if (id == null)
 		{
@@ -128,7 +128,7 @@ public class SQLCategoriesService : ICategoriesService
 				var categories = await _context.Categories.Where(c => !c.IsPrimary).ToListAsync();
 				foreach (var c in categories)
 				{
-					c.Price = category.Price!.Value * c.Standard / existingCategory.Standard;
+					c.Price = existingCategory.Price * c.Standard / existingCategory.Standard;
 				}
 			}
 

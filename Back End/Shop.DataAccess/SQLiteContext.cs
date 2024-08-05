@@ -9,12 +9,14 @@ namespace Shop.DataAccess;
 public class SQLiteContext : IdentityDbContext<User, IdentityRole<int>, int>
 {
 
-	protected readonly IConfiguration Configuration;
+	protected readonly IConfiguration? Configuration;
 
 	public SQLiteContext(IConfiguration configuration)
 	{
 		Configuration = configuration;
 	}
+
+	public SQLiteContext(DbContextOptions<SQLiteContext> options) : base(options) { }
 
 	// Default constructor (For migrations)
 	public SQLiteContext()
