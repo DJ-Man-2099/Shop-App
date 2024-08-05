@@ -1,9 +1,20 @@
+using Microsoft.EntityFrameworkCore;
+using Shop.DataAccess;
+using Shop.DataAccess.Interfaces;
+using Shop.DataAccess.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<ICategoriesService, SQLCategoriesService>();
+builder.Services.AddDbContext<SQLiteContext>(options =>
+options.UseSqlite(builder.Configuration.GetConnectionString("SqliteDatabase")
+));
+builder.Services.AddControllers();
+
 
 var app = builder.Build();
 
@@ -23,7 +34,7 @@ var summaries = new[]
 
 app.MapGet("/weatherforecast", () =>
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
+    var forecast = Enumerable.Range(1, 5).Select(index =>
         new WeatherForecast
         (
             DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
@@ -35,6 +46,8 @@ app.MapGet("/weatherforecast", () =>
 })
 .WithName("GetWeatherForecast")
 .WithOpenApi();
+
+app.MapControllers();
 
 app.Run();
 
