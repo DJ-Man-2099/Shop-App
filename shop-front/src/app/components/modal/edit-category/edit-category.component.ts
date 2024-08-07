@@ -1,18 +1,21 @@
 import { Component } from '@angular/core';
 import { FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Location } from '@angular/common';
+
 import { CategoryService } from '../../../Services/category.service';
 import {
   FormKeys,
   EnhancedFormBuilderService,
 } from '../../../Services/enhanced-form-builder.service';
 import { ModalNavigateService } from '../../../Services/modal-navigate.service';
-import { Location } from '@angular/common';
 import { Category } from '../../../interfaces/category';
+import { LoadingComponent } from '../../loading/loading.component';
+import { MessageComponent } from '../message/message.component';
 
 @Component({
   selector: 'app-edit-category',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, LoadingComponent],
   templateUrl: './edit-category.component.html',
   styleUrl: './edit-category.component.css',
 })
@@ -79,6 +82,22 @@ export class EditCategoryComponent {
     const response = await this.categoryService.editCategory(
       this.editCategory.Id!,
       this.editCategoryForm.value
+    );
+    if (response.ok) {
+      this.categoryService.changeCateogryPrices.emit();
+      this.onDismiss();
+    }
+  }
+
+  onDelete() {
+    if (confirm('هل انت متأكد من رغبتك في الغاء العيار؟')) {
+      this.onAccept();
+    }
+  }
+
+  async onAccept() {
+    const response = await this.categoryService.deleteCategory(
+      this.editCategory.Id!
     );
     if (response.ok) {
       this.categoryService.changeCateogryPrices.emit();

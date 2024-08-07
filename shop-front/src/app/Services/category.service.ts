@@ -105,4 +105,22 @@ export class CategoryService {
         )
     );
   }
+
+  deleteCategory(id: number) {
+    return firstValueFrom(
+      this.http
+        .delete<returnedCategory>(`api/Category/${id}`, {
+          observe: 'response',
+        })
+        .pipe(
+          catchError((err) =>
+            of({
+              ok: false,
+              error: err,
+              body: undefined,
+            })
+          )
+        )
+    );
+  }
 }

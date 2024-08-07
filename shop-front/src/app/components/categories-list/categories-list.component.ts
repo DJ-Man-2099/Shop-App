@@ -1,13 +1,6 @@
-import {
-  ChangeDetectorRef,
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Category } from '../../interfaces/category';
 import { CategoryService } from '../../Services/category.service';
-import { Router } from '@angular/router';
 import { AddnewcategoryComponent } from '../modal/addnewcategory/addnewcategory.component';
 import { ModalNavigateService } from '../../Services/modal-navigate.service';
 import { EditCategoryComponent } from '../modal/edit-category/edit-category.component';
@@ -60,7 +53,7 @@ export class CategoriesListComponent implements OnInit {
 
   editCategory(category: Category) {
     this.modal.goToModal(
-      [EditCategoryComponent.Path, category.Standard.toString()],
+      [EditCategoryComponent.Path, category.Id!.toString()],
       category
     );
   }

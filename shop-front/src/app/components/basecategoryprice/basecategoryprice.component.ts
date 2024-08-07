@@ -19,11 +19,12 @@ import {
   EnhancedFormBuilderService,
   FormKeys,
 } from '../../Services/enhanced-form-builder.service';
+import { LoadingComponent } from '../loading/loading.component';
 
 @Component({
   selector: 'app-basecategoryprice',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule],
+  imports: [FormsModule, ReactiveFormsModule, LoadingComponent],
   templateUrl: './basecategoryprice.component.html',
   styleUrl: './basecategoryprice.component.css',
 })

@@ -12,14 +12,14 @@
 			</div>
 			}
 			<div class="d-flex justify-content-between align-items-center">
-				<button class="btn btn-primary" type="submit" [disabled]="editCategoryForm.invalid"
-					(click)="onSubmit()">تعديل</button>
-				<button class="btn btn-danger" (click)="onDismiss()">الغاء العيار</button>
-				<button class="btn btn-warning" (click)="onDismiss()">اغلاق</button>
+				<button class="btn btn-primary" type="submit" [disabled]="editCategoryForm.invalid">تعديل</button>
+				@if(!editCategory.IsPrimary){<button class="btn btn-danger" type="button" (click)="onDelete()">الغاء
+					العيار</button>}
+				<button class="btn btn-warning" type="button" (click)="onDismiss()">اغلاق</button>
 			</div>
 
 		</form>
 	</div>
 	} @else {
-	loading...........
+	<app-loading />
 	}
