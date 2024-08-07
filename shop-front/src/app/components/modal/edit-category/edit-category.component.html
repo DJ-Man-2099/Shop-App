@@ -1,7 +1,10 @@
 <div class="card">
 	@if(isLoaded){
 
-	<div class="card-header">تعديل {{editCategory.Name}}{{editCategory.IsPrimary?" (العيار الأساسي)":""}}</div>
+	<div class="card-header d-flex justify-content-between align-items-center">
+		تعديل {{editCategory.Name}}{{editCategory.IsPrimary?" (العيار الأساسي)":""}}
+		<button class="btn btn-success" (click)="onChangeBase()">تحديد كعيار رئيسي</button>
+	</div>
 	<div class="card-body">
 		<form class="d-flex flex-column gap-2" [formGroup]="editCategoryForm" (ngSubmit)="onSubmit()">
 			@for(control of editCategoryFormControlNames; track control.key){

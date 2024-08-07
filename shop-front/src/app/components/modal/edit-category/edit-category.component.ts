@@ -105,6 +105,18 @@ export class EditCategoryComponent {
     }
   }
 
+  async onChangeBase() {
+    if (confirm('هل انت متأكد من اختيار هذا المعيار كأساسي؟')) {
+      const response = await this.categoryService.changeBaseCategory(
+        this.editCategory.Id!
+      );
+      if (response.ok) {
+        this.categoryService.changeBaseCategoryEvent.emit();
+        this.onDismiss();
+      }
+    }
+  }
+
   onDismiss() {
     this.modal.dismiss();
   }

@@ -69,6 +69,14 @@ export class BasecategorypriceComponent implements OnInit {
       this.baseCategoryPrice = this.baseCategory.price ?? 0;
       this.categoryService.changeCateogryPrices.emit();
     }
+
+    this.categoryService.changeBaseCategoryEvent.subscribe(async () => {
+      const response = await this.categoryService.getBaseCategory();
+      if (response.ok) {
+        this.baseCategory = response.body!;
+        this.baseCategoryPrice = this.baseCategory.price ?? 0;
+      }
+    });
     this.isLoading = false;
   }
 

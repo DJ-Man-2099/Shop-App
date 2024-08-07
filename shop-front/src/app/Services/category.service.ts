@@ -11,6 +11,7 @@ export class CategoryService {
   constructor(private http: HttpClient) {}
 
   changeCateogryPrices = new EventEmitter<void>();
+  changeBaseCategoryEvent = new EventEmitter<void>();
 
   getBaseCategory() {
     return firstValueFrom(
@@ -110,6 +111,24 @@ export class CategoryService {
     return firstValueFrom(
       this.http
         .delete<returnedCategory>(`api/Category/${id}`, {
+          observe: 'response',
+        })
+        .pipe(
+          catchError((err) =>
+            of({
+              ok: false,
+              error: err,
+              body: undefined,
+            })
+          )
+        )
+    );
+  }
+
+  changeBaseCategory(id: number) {
+    return firstValueFrom(
+      this.http
+        .post<returnedCategory>(`api/Category/changebase/${id}`, null, {
           observe: 'response',
         })
         .pipe(
