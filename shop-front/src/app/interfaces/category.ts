@@ -1,16 +1,15 @@
-export interface BaseCategoryInfo {
-  standard: number;
-  price: number;
+export interface Category {
+  Id?: number;
+  Name: string;
+  Standard: number;
+  Price: number;
+  IsPrimary: boolean;
 }
 
-export type FormKeys = {
-  key: string;
-  type: 'text' | 'number';
+export interface returnedCategory {
+  id: number;
   name: string;
-};
-
-export interface Category {
-	Name: string;
-	Standard: number;
-	Price: number;
+  standard: number;
+  price: number;
+  isPrimary: boolean;
 }

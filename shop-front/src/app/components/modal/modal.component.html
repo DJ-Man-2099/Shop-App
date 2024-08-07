@@ -1,0 +1,5 @@
+<div #modal class="main d-flex px-2 py-5 justify-content-center hide" (click)="dismiss()">
+	<span [style.height]="'fit-content'" (click)="$event.stopPropagation()">
+		<router-outlet name="modal"></router-outlet>
+	</span>
+</div>

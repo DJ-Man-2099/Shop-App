@@ -1,0 +1,24 @@
+<div class="card d-flex flex-column gap-3 p-2">
+	<div class="d-flex align-items-center justify-content-between w-100">قائمة العيارات
+		<button class="btn btn-info" [disabled]="categories.length===0" (click)="addNewCategory()">إضافة عيار
+			جديد</button>
+	</div>
+	<table class="table table-hover table-striped table-bordered">
+		<thead>
+			<tr>
+				<th scope="col">الأسم</th>
+				<th scope="col">العيار</th>
+				<th scope="col">السعر</th>
+			</tr>
+		</thead>
+		<tbody class="table-group-divider">
+			@for(category of categories; track category.Standard){
+			<tr class="table-primary" (click)="editCategory(category)">
+				<td class="table-data">{{category.Name}}</td>
+				<td class="table-data">{{category.Standard}}</td>
+				<td class="table-data">{{category.Price}}</td>
+			</tr>
+			}
+		</tbody>
+	</table>
+</div>
