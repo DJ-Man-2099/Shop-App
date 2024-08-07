@@ -188,4 +188,20 @@ public class SQLCategoriesService : ICategoriesService
 		}
 		return new OpResult<Category> { Value = existingCategory };
 	}
+
+	public async Task<OpResult<object>> DeleteCategoryAsync(int id)
+	{
+		var existingCategory = await _context.Categories.FindAsync(id);
+		if (existingCategory == null)
+		{
+			return new OpResult<object>
+			{
+				Succeeded = false,
+				Errors = new Dictionary<string, string> { { "Id", "Category not found" } }
+			};
+		}
+		_context.Categories.Remove(existingCategory);
+		await _context.SaveChangesAsync();
+		return new OpResult<object> { };
+	}
 }

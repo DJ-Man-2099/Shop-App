@@ -73,6 +73,17 @@ public class CategoryController : ControllerBase
 		return Ok(result.Value!);
 	}
 
+	[HttpDelete("{id:int}")]
+	public async Task<IActionResult> DeleteCategory(int id)
+	{
+		var result = await _categoriesService.DeleteCategoryAsync(id);
+		if (!result.Succeeded)
+		{
+			return NotFound(result.Errors!);
+		}
+		return Ok();
+	}
+
 }
 public class PriceUpdateModel
 {
