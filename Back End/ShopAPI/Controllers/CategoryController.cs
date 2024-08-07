@@ -84,6 +84,17 @@ public class CategoryController : ControllerBase
 		return Ok();
 	}
 
+	[HttpPost("changebase/{id:int}")]
+	public async Task<IActionResult> ChangeBaseCategory(int id)
+	{
+		var result = await _categoriesService.ChangeBaseCategoryAsync(id);
+		if (!result.Succeeded)
+		{
+			return NotFound(result.Errors!);
+		}
+		return Ok(result.Value!);
+	}
+
 }
 public class PriceUpdateModel
 {

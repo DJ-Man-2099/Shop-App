@@ -204,4 +204,23 @@ public class SQLCategoriesService : ICategoriesService
 		await _context.SaveChangesAsync();
 		return new OpResult<object> { };
 	}
+
+	public async Task<OpResult<Category>> ChangeBaseCategoryAsync(int id)
+	{
+		var existingCategory = await _context.Categories.FindAsync(id);
+		if (existingCategory == null)
+		{
+			return new OpResult<Category>
+			{
+				Succeeded = false,
+				Errors = new Dictionary<string, string> { { "Id", "Category not found" } }
+			};
+		}
+		var baseCategory = await _context.Categories.FirstAsync(c => c.IsPrimary);
+		baseCategory.IsPrimary = false;
+		existingCategory.IsPrimary = true;
+		await _context.SaveChangesAsync();
+
+		return new OpResult<Category> { Value = existingCategory };
+	}
 }

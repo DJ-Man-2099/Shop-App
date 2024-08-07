@@ -15,4 +15,7 @@ public interface ICategoriesService
 	Task<OpResult<Category>> UpsertCategoryAsync(InputCategory category, int? id);
 
 	Task<OpResult<object>> DeleteCategoryAsync(int id);
+
+	Task<OpResult<Category>> ChangeBaseCategoryAsync(int id);
+
 }
