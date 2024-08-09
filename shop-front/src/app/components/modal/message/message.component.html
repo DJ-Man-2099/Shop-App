@@ -1,0 +1,12 @@
+<div class="card">
+	@if(isLoaded){
+	<div class="card-header">{{title}}</div>
+	<div class="card-body">{{message}}</div>
+	<div class="card-footer d-flex align-items-center justify-content-between">
+		<button class="btn {{messageType}}" (click)="onAccept()">تأكيد</button>
+		<button class="btn btn-warning">الغاء</button>
+	</div>
+	}@else{
+	<app-loading />
+	}
+</div>

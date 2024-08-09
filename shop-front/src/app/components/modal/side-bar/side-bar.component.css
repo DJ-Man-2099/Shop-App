@@ -1,0 +1,21 @@
+.user-info {
+	height: 50vw;
+	background-color: blanchedalmond;
+	display: flex;
+	flex-direction: column;
+	justify-content: end;
+	padding: 1rem;
+}
+
+
+.main {
+	position: absolute;
+	top: 0;
+	width: 50vw;
+	height: 100%;
+	background-color: white;
+}
+
+ul>button {
+	text-align: right;
+}

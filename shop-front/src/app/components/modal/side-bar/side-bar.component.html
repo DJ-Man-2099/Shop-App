@@ -1,0 +1,18 @@
+<div class="main">
+	<div class="px-2 d-flex justify-content-between align-items-center" style="background-color: blue;"
+		(click)="dismiss()">
+		اغلاق القائمة الجانبية
+		<i class="bi bi-arrow-left-circle-fill"></i>
+	</div>
+	<!-- User Data -->
+	<div class="user-info">
+		<h3>الاسم: {{"ديفيد جون"}}</h3>
+		<h3>الوظيفة: {{"مدير"}}</h3>
+	</div>
+	<!-- Navigation -->
+	<ul class="list-group list-group-flush w-100 pe-0">
+		@for(link of links; track link){
+		<button (click)="goto(link.path)" class="list-group-item">{{link.name}}</button>
+		}
+	</ul>
+</div>

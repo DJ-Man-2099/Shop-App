@@ -2,3 +2,26 @@
 	font-weight: 500 !important;
 	font-size: 0.9em !important;
 }
+
+.title {
+	height: 3rem;
+}
+
+.table-holder {
+	overflow-y: auto;
+	border: 2px solid black;
+}
+
+thead {
+	position: sticky;
+	top: -1px;
+}
+
+thead>tr>th {
+	border-bottom: 2px solid black;
+}
+
+table {
+	border-collapse: collapse;
+	margin-bottom: 0;
+}

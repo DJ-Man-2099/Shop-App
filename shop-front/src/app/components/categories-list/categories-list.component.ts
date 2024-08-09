@@ -13,6 +13,8 @@ import { EditCategoryComponent } from '../modal/edit-category/edit-category.comp
   styleUrl: './categories-list.component.css',
 })
 export class CategoriesListComponent implements OnInit {
+  static Path = 'categories-list';
+
   categories: Category[] = [];
 
   constructor(
@@ -47,6 +49,8 @@ export class CategoriesListComponent implements OnInit {
             IsPrimary: c.isPrimary,
           };
         }) ?? [];
+
+      // Repeat the list 10 times
       this.cdr.detectChanges();
     }
   }

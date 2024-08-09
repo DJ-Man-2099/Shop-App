@@ -11,3 +11,26 @@ body {
 	font-weight: 700 !important;
 	font-size: 1.2rem !important;
 }
+
+.page-container>*:not(router-outlet) {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+.page-container>*:not(router-outlet)>* {
+	height: min-content;
+	min-height: calc(59vh - 3rem - 65.75px);
+	max-height: calc(82vh - 3rem - 65.75px);
+	width: 100%;
+}
+
+app-root {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+i.bi {
+	font-size: 40px !important;
+}
