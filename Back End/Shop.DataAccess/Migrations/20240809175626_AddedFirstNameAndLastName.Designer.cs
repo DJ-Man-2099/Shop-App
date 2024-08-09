@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Shop.DataAccess;
 
@@ -10,9 +11,11 @@ using Shop.DataAccess;
 namespace Shop.DataAccess.Migrations
 {
     [DbContext(typeof(SQLiteContext))]
-    partial class SQLiteContextModelSnapshot : ModelSnapshot
+    [Migration("20240809175626_AddedFirstNameAndLastName")]
+    partial class AddedFirstNameAndLastName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.7");
@@ -164,7 +167,7 @@ namespace Shop.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("Shop.Models.Group", b =>
@@ -184,7 +187,7 @@ namespace Shop.DataAccess.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Groups", (string)null);
+                    b.ToTable("Groups");
                 });
 
             modelBuilder.Entity("Shop.Models.Product", b =>
@@ -213,7 +216,7 @@ namespace Shop.DataAccess.Migrations
 
                     b.HasIndex("GroupId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("Shop.Models.User", b =>

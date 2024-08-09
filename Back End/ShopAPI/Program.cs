@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Shop.Authentication;
 using Shop.Authentication.Interfaces;
 using Shop.Authentication.Services;
 using Shop.DataAccess;
@@ -16,23 +17,39 @@ void ApplyMigrations(IApplicationBuilder app)
     context.Database.Migrate();
 }
 
+async void AddRoles(IApplicationBuilder app)
+{
+    using var scope = app.ApplicationServices.CreateScope();
+    var manager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
+
+
+    foreach (var role in Roles.roles)
+    {
+        var exists = await manager.RoleExistsAsync(role);
+        if (!exists)
+        {
+            await manager.CreateAsync(new IdentityRole<int>(role));
+        }
+    }
+}
+
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<SignInManager<User>>();
+builder.Services.AddScoped<RoleManager<IdentityRole<int>>>();
 builder.Services.AddScoped<ITokenService, TestTokenService>();
 builder.Services.AddScoped<IUserService, SQLUserService>();
 builder.Services.AddIdentity<User, IdentityRole<int>>()
 .AddEntityFrameworkStores<SQLiteContext>();
 builder.Services.AddAuthorization(); // Add authorization services
+builder.Services.AddAuthentication(); // Add authorization services
 
 builder.Services.AddDbContext<SQLiteContext>(options =>
 options.UseSqlite(builder.Configuration.GetConnectionString("SqliteDatabase")
 ));
-
-
 
 builder.Services.AddScoped<ICategoriesService, SQLCategoriesService>();
 
@@ -54,6 +71,8 @@ var app = builder.Build();
 
 // Apply migrations
 ApplyMigrations(app);
+// Add Roles
+AddRoles(app);
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -84,6 +103,7 @@ app.MapGet("/weatherforecast", () =>
 .WithOpenApi();
 
 app.UseCors("AllowLocalhost4200");
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
