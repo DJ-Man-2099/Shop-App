@@ -8,3 +8,7 @@ public class OpResult<T>
 	public T? Value { get; set; }
 	public Dictionary<string, string>? Errors { get; set; }
 }
+
+public class OpResult : OpResult<int>
+{
+}

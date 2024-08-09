@@ -5,5 +5,4 @@ namespace Shop.Models;
 
 public class User : IdentityUser<int>
 {
-
 }

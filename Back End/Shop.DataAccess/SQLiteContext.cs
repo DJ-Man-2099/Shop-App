@@ -12,21 +12,30 @@ public class SQLiteContext : IdentityDbContext<User, IdentityRole<int>, int>
 
 	protected readonly IConfiguration? Configuration;
 
-	public SQLiteContext(IConfiguration? configuration = null, DbContextOptions<SQLiteContext>? options = null) : base(options!)
+	public SQLiteContext(IConfiguration? configuration = null, DbContextOptions<SQLiteContext>? options = null) : base(options ?? new DbContextOptions<SQLiteContext>())
 	{
-		Configuration = configuration;
+		if (configuration != null)
+		{ Configuration = configuration; }
+		else
+		{
+			var builder = new ConfigurationBuilder()
+			.SetBasePath(AppContext.BaseDirectory)
+			.AddJsonFile("appsettings.json");
+
+			Configuration = builder.Build();
+		}
 	}
 
 
 	// Default constructor (For migrations)
-	public SQLiteContext()
-	{
-		var builder = new ConfigurationBuilder()
-			.SetBasePath(AppContext.BaseDirectory)
-			.AddJsonFile("appsettings.json");
+	// public SQLiteContext()
+	// {
+	// 	var builder = new ConfigurationBuilder()
+	// 		.SetBasePath(AppContext.BaseDirectory)
+	// 		.AddJsonFile("appsettings.json");
 
-		Configuration = builder.Build();
-	}
+	// 	Configuration = builder.Build();
+	// }
 
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{
