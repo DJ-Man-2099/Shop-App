@@ -47,21 +47,7 @@ public class GroupsService : IGroupsService
 		}
 		return new OpResult<GroupDTO>
 		{
-			Value = GroupToGroupDTO(group)
-		};
-	}
-
-	private static GroupDTO GroupToGroupDTO(Group group)
-	{
-		return new GroupDTO
-		{
-			Name = group.Name,
-			Id = group.Id,
-			Category = new GroupCategoryDTO
-			{
-				Id = group.CategoryId,
-				Name = group.Category.Name
-			}
+			Value = GroupDTO.FromGroup(group)
 		};
 	}
 
@@ -69,7 +55,7 @@ public class GroupsService : IGroupsService
 	{
 		return new OpResult<IEnumerable<GroupDTO>>
 		{
-			Value = await _context.Groups.Include(g => g.Category).Select(group => GroupToGroupDTO(group)).ToListAsync()
+			Value = await _context.Groups.Include(g => g.Category).Select(group => GroupDTO.FromGroup(group)).ToListAsync()
 		};
 	}
 
@@ -115,7 +101,7 @@ public class GroupsService : IGroupsService
 
 		return new OpResult<GroupDTO>
 		{
-			Value = GroupToGroupDTO(existingGroup)
+			Value = GroupDTO.FromGroup(existingGroup)
 		};
 	}
 
@@ -150,7 +136,7 @@ public class GroupsService : IGroupsService
 		}
 		return new OpResult<GroupDTO>
 		{
-			Value = GroupToGroupDTO(newGroup)
+			Value = GroupDTO.FromGroup(newGroup)
 		};
 	}
 
@@ -164,7 +150,7 @@ public class GroupsService : IGroupsService
 
 		return new OpResult<IEnumerable<GroupDTO>>
 		{
-			Value = [.. category.Groups!.Select(group => GroupToGroupDTO(group))]
+			Value = [.. category.Groups!.Select(group => GroupDTO.FromGroup(group))]
 		};
 	}
 

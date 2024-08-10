@@ -53,7 +53,7 @@ public class CategoryController : ControllerBase
 	[HttpPost]
 	[HttpPatch("{id:int}")]
 	[TokenAuthorize]
-	public async Task<IActionResult> UpsertCategory(InputCategory category, int? id)
+	public async Task<IActionResult> UpsertCategory(InputCategory category, int? id = null)
 	{
 		var result = await _service.UpsertCategoryAsync(category, id);
 		if (result.Succeeded)

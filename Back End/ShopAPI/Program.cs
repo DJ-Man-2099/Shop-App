@@ -51,6 +51,7 @@ builder.Services.AddDbContext<AppDBContext>();
 
 builder.Services.AddScoped<ICategoriesService, CategoriesService>();
 builder.Services.AddScoped<IGroupsService, GroupsService>();
+builder.Services.AddScoped<IProductsService, ProductsService>();
 
 builder.Services.AddControllers();
 

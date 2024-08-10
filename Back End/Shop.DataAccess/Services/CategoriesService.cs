@@ -17,44 +17,48 @@ public class CategoriesService : ICategoriesService
 		_context = context;
 	}
 
-	public async Task<OpResult<Category>> GetBaseCategoryAsync()
+	public async Task<OpResult<CategoryDTO>> GetBaseCategoryAsync()
 	{
 		var category = await _context.Categories.FirstOrDefaultAsync(c => c.IsPrimary);
 		if (category == null)
 		{
-			return OpResult<Category>.NotFound("Base Category not found");
+			return OpResult<CategoryDTO>.NotFound("Base Category not found");
 		}
-		return new OpResult<Category> { Value = category };
+		return new OpResult<CategoryDTO> { Value = CategoryDTO.FromBaseCategory(category) };
 	}
 
-	public async Task<OpResult<Category>> SetBaseCategoryPriceAsync(float price)
+	public async Task<OpResult<CategoryDTO>> SetBaseCategoryPriceAsync(float price)
 	{
 		var category = await _context.Categories.FirstOrDefaultAsync(c => c.IsPrimary);
 		if (category == null)
 		{
-			return OpResult<Category>.NotFound("Base Category not found");
+			return OpResult<CategoryDTO>.NotFound("Base Category not found");
 		}
 		var tempCategory = new InputCategory { Price = price };
 		return await UpdateExisting(tempCategory, category.Id);
 	}
 
-	public async Task<OpResult<IEnumerable<Category>>> GetCategoriesAsync()
+	public async Task<OpResult<IEnumerable<CategoryDTO>>> GetCategoriesAsync()
 	{
-		var categories = await _context.Categories.ToListAsync();
-		return new OpResult<IEnumerable<Category>> { Value = categories };
+		var categories = await _context.Categories.Select(c => CategoryDTO.FromCategory(c, c.IsPrimary ? CategoryDTO.Primary : CategoryDTO.Secondary)).ToListAsync();
+		return new OpResult<IEnumerable<CategoryDTO>> { Value = categories };
 	}
 
-	public async Task<OpResult<Category>> GetCategoryAsync(int id)
+	public async Task<OpResult<CategoryDTO>> GetCategoryAsync(int id)
 	{
 		var category = await _context.Categories.FindAsync(id);
 		if (category == null)
 		{
-			return OpResult<Category>.NotFound("Category not found");
+			return OpResult<CategoryDTO>.NotFound("Category not found");
 		}
-		return new OpResult<Category> { Value = category };
+		return new OpResult<CategoryDTO>
+		{
+			Value = CategoryDTO.FromCategory(category,
+																	  category.IsPrimary ? CategoryDTO.Primary : CategoryDTO.Secondary)
+		};
 	}
 
-	public async Task<OpResult<Category>> UpsertCategoryAsync(InputCategory category, int? id = null)
+	public async Task<OpResult<CategoryDTO>> UpsertCategoryAsync(InputCategory category, int? id = null)
 	{
 		if (id == null)
 		{
@@ -66,15 +70,15 @@ public class CategoriesService : ICategoriesService
 		}
 	}
 
-	private async Task<OpResult<Category>> AddNew(InputCategory category)
+	private async Task<OpResult<CategoryDTO>> AddNew(InputCategory category)
 	{
 		if (string.IsNullOrEmpty(category.Name))
 		{
-			return OpResult<Category>.BadRequest("Name is required");
+			return OpResult<CategoryDTO>.BadRequest("Name is required");
 		}
 		if (!category.Standard.HasValue)
 		{
-			return OpResult<Category>.BadRequest("Standard is required");
+			return OpResult<CategoryDTO>.BadRequest("Standard is required");
 		}
 		var baseCategory = await _context.Categories.FirstOrDefaultAsync(c => c.IsPrimary);
 		float price;
@@ -83,7 +87,7 @@ public class CategoriesService : ICategoriesService
 		{
 			if (category.Price == null)
 			{
-				return OpResult<Category>.BadRequest("Price is required");
+				return OpResult<CategoryDTO>.BadRequest("Price is required");
 			}
 			price = category.Price.Value;
 		}
@@ -105,17 +109,17 @@ public class CategoriesService : ICategoriesService
 		}
 		catch (DbUpdateException)
 		{
-			return OpResult<Category>.ServerError($"Failed to add Category with Standard: {category.Standard}");
+			return OpResult<CategoryDTO>.ServerError($"Failed to add Category with Standard: {category.Standard}");
 		}
-		return new OpResult<Category> { Value = newCategory };
+		return new OpResult<CategoryDTO> { Value = CategoryDTO.FromCategory(newCategory, newCategory.IsPrimary ? CategoryDTO.Primary : CategoryDTO.Secondary) };
 	}
 
-	private async Task<OpResult<Category>> UpdateExisting(InputCategory category, int id)
+	private async Task<OpResult<CategoryDTO>> UpdateExisting(InputCategory category, int id)
 	{
 		var existingCategory = await _context.Categories.FindAsync(id);
 		if (existingCategory == null)
 		{
-			return OpResult<Category>.NotFound("Category not found");
+			return OpResult<CategoryDTO>.NotFound("Category not found");
 		}
 		existingCategory.Name = category.Name ?? existingCategory.Name;
 		if (existingCategory.IsPrimary)
@@ -152,9 +156,9 @@ public class CategoriesService : ICategoriesService
 		}
 		catch (DbUpdateException)
 		{
-			return OpResult<Category>.ServerError($"Failed to update Category with Standard: {category.Standard}");
+			return OpResult<CategoryDTO>.ServerError($"Failed to update Category with Standard: {category.Standard}");
 		}
-		return new OpResult<Category> { Value = existingCategory };
+		return new OpResult<CategoryDTO> { Value = CategoryDTO.FromCategory(existingCategory, existingCategory.IsPrimary ? CategoryDTO.Primary : CategoryDTO.Secondary) };
 	}
 
 	public async Task<OpResult> DeleteCategoryAsync(int id)
@@ -169,18 +173,18 @@ public class CategoriesService : ICategoriesService
 		return new OpResult();
 	}
 
-	public async Task<OpResult<Category>> ChangeBaseCategoryAsync(int id)
+	public async Task<OpResult<CategoryDTO>> ChangeBaseCategoryAsync(int id)
 	{
 		var existingCategory = await _context.Categories.FindAsync(id);
 		if (existingCategory == null)
 		{
-			return OpResult<Category>.NotFound("Category not found");
+			return OpResult<CategoryDTO>.NotFound("Category not found");
 		}
 		var baseCategory = await _context.Categories.FirstAsync(c => c.IsPrimary);
 		baseCategory.IsPrimary = false;
 		existingCategory.IsPrimary = true;
 		await _context.SaveChangesAsync();
 
-		return new OpResult<Category> { Value = existingCategory };
+		return new OpResult<CategoryDTO> { Value = CategoryDTO.FromCategory(existingCategory, existingCategory.IsPrimary ? CategoryDTO.Primary : CategoryDTO.Secondary) };
 	}
 }

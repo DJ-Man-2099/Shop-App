@@ -22,8 +22,7 @@ public class Product
 	[Required]
 	public virtual required Group Group { get; set; }
 
-	[Required]
-	public required int GroupId { get; set; }
+	public int GroupId { get; set; }
 
 
 }
