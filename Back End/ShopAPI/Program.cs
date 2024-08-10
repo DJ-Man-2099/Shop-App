@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+
 using Shop.Authentication;
 using Shop.Authentication.Interfaces;
 using Shop.Authentication.Services;
@@ -7,6 +9,8 @@ using Shop.DataAccess;
 using Shop.DataAccess.Interfaces;
 using Shop.DataAccess.Services;
 using Shop.Models.DB;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,7 +49,30 @@ builder.Services.AddScoped<IUserService, SQLUserService>();
 builder.Services.AddIdentity<User, IdentityRole<int>>()
                 .AddEntityFrameworkStores<AppDBContext>();
 builder.Services.AddAuthorization(); // Add authorization services
-builder.Services.AddAuthentication(); // Add authorization services
+builder.Services
+    .AddAuthentication(
+        options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+    .AddJwtBearer(
+        jwtOptions =>
+        {
+            var key = builder.Configuration.GetValue<string>("JwtConfig:Key")
+            ?? throw new Exception("JWT key not found in configuration");
+            var keyBytes = Encoding.ASCII.GetBytes(key);
+            jwtOptions.SaveToken = true;
+            jwtOptions.TokenValidationParameters = new TokenValidationParameters
+            {
+                IssuerSigningKey = new SymmetricSecurityKey(keyBytes),
+                ValidateLifetime = true,
+                ValidateAudience = true,
+                ValidIssuer = builder.Configuration["JwtConfig:Issuer"],
+                ValidAudience = builder.Configuration["JwtConfig:Audience"],
+                ValidateIssuer = true
+            };
+        }); // Add authorization services
 
 builder.Services.AddDbContext<AppDBContext>();
 

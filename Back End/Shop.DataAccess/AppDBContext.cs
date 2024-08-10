@@ -15,9 +15,10 @@ public class AppDBContext : IdentityDbContext<User, IdentityRole<int>, int>
 		IConfiguration? configuration = null,
 		DbContextOptions<AppDBContext>? options = null) : base(options ?? new DbContextOptions<AppDBContext>())
 	{
+		// throw new Exception($"Config is null? {configuration!.GetConnectionString("SqliteDatabase")}");
 		if (configuration != null)
 		{ Configuration = configuration; }
-		else
+		else if (options == null)
 		{
 			var builder = new ConfigurationBuilder()
 			.SetBasePath(AppContext.BaseDirectory)
@@ -30,7 +31,6 @@ public class AppDBContext : IdentityDbContext<User, IdentityRole<int>, int>
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{
 		var dbType = Configuration?.GetConnectionString("DefaultDatabase");
-
 		optionsBuilder.UseSqlite(Configuration?.GetConnectionString(dbType!),
 		b => b.MigrationsAssembly("Shop.DataAccess"));
 

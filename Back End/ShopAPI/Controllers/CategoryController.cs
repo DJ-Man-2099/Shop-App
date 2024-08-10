@@ -33,7 +33,7 @@ public class CategoryController : ControllerBase
 		var result = await _service.GetBaseCategoryAsync();
 		if (!result.Succeeded)
 		{
-			return NotFound(result.Errors!);
+			return NotFound(result.Errors![OpResult.NotFoundCode]);
 		}
 		return Ok(result.Value!);
 	}
@@ -45,7 +45,7 @@ public class CategoryController : ControllerBase
 		var result = await _service.GetCategoryAsync(id);
 		if (!result.Succeeded)
 		{
-			return NotFound(result.Errors!);
+			return NotFound(result.Errors![OpResult.NotFoundCode]);
 		}
 		return Ok(result.Value!);
 	}
@@ -97,7 +97,7 @@ public class CategoryController : ControllerBase
 		var result = await _service.DeleteCategoryAsync(id);
 		if (!result.Succeeded)
 		{
-			return NotFound(result.Errors!);
+			return NotFound(result.Errors![OpResult.NotFoundCode]);
 		}
 		return Ok();
 	}
@@ -109,7 +109,7 @@ public class CategoryController : ControllerBase
 		var result = await _service.ChangeBaseCategoryAsync(id);
 		if (!result.Succeeded)
 		{
-			return NotFound(result.Errors!);
+			return NotFound(result.Errors![OpResult.NotFoundCode]);
 		}
 		return Ok(result.Value!);
 	}

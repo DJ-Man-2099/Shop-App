@@ -9,30 +9,6 @@ public class BaseWebAppFactory : WebApplicationFactory<Program>
 {
 	protected override void ConfigureWebHost(IWebHostBuilder builder)
 	{
-		builder.ConfigureServices((context, services) =>
-		{
-			// Remove the app's ApplicationDbContext registration.
-			var descriptor = services.SingleOrDefault(
-				d => d.ServiceType ==
-					typeof(DbContextOptions<AppDBContext>));
-
-			if (descriptor != null)
-			{
-				services.Remove(descriptor);
-			}
-
-			// Add a database context (ApplicationDbContext) as A Scoped Service
-			// using a SQLite database for testing.
-			var config = TestConfiguration.GetConfiguration();
-			var connection = new SqliteConnection(config.GetConnectionString("IntegrationDatabase"));
-			services.AddScoped(provider =>
-			{
-				var context = new AppDBContext(options: new DbContextOptionsBuilder<AppDBContext>()
-					.UseSqlite(connection)
-					.Options);
-				return context;
-			});
-
-		});
+		builder.UseEnvironment("Testing");
 	}
 }

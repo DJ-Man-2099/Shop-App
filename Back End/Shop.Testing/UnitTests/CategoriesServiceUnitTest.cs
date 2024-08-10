@@ -1,15 +1,16 @@
 using Shop.DataAccess.Services;
 using Shop.Models.Contracts;
+using Shop.Models.Contracts.Category;
 using Shop.Models.DB;
 using Shop.Testing.Helpers;
 using Shouldly;
 
 namespace Shop.Testing;
 
-public class CategoriesTest : BaseUnitTest
+public class CategoriesServiceUnitTest : BaseUnitTest
 {
 	private readonly CategoriesService _service;
-	public CategoriesTest() : base()
+	public CategoriesServiceUnitTest() : base()
 	{
 		_service = new CategoriesService(_context);
 	}
@@ -32,8 +33,8 @@ public class CategoriesTest : BaseUnitTest
 
 		result.Succeeded.ShouldBeFalse();
 		result.Errors.ShouldNotBeNull();
-		result.Errors.ShouldContainKey("Id");
-		result.Errors["Id"].ShouldBe("Category not found");
+		result.Errors.ShouldContainKey(OpResult.NotFoundCode);
+		result.Errors[OpResult.NotFoundCode].ShouldBe("Category not found");
 	}
 
 	[Fact]
@@ -84,21 +85,21 @@ public class CategoriesTest : BaseUnitTest
 
 		result.Succeeded.ShouldBeTrue();
 		var returnedCategory = result.Value;
-		var expectedCategory = new Category
+		var expectedCategory = new CategoryDTO
 		{
 			Id = 1,
 			Name = "Base Category",
 			Standard = 5,
 			Price = 10,
-			IsPrimary = true
+			Type = CategoryDTO.Primary
 		};
 		returnedCategory.ShouldBeEquivalentTo(expectedCategory);
 	}
 
 	[Theory]
-	[InlineData(["Test 1", 1, 2, false])]
-	[InlineData(["Test 2", 4, 8, false])]
-	public async Task TestAddMultipleSecondary(string Name, int Standard, float ExpectedPrice, bool ExpectedIsPrimary)
+	[InlineData(["Test 1", 1, 2, CategoryDTO.Secondary])]
+	[InlineData(["Test 2", 4, 8, CategoryDTO.Secondary])]
+	public async Task TestAddMultipleSecondary(string Name, int Standard, float ExpectedPrice, string ExpectedType)
 	{
 
 		var category = new InputCategory
@@ -122,21 +123,21 @@ public class CategoriesTest : BaseUnitTest
 
 		result.Succeeded.ShouldBeTrue();
 		var returnedCategory = result.Value;
-		var expectedCategory = new Category
+		var expectedCategory = new CategoryDTO
 		{
 			Id = 2,
 			Name = Name,
 			Standard = Standard,
 			Price = ExpectedPrice,
-			IsPrimary = ExpectedIsPrimary
+			Type = ExpectedType
 		};
 		returnedCategory.ShouldBeEquivalentTo(expectedCategory);
 	}
 
 	[Theory]
-	[InlineData(["", 5, 10f, "Name", "Name is required"])]
-	[InlineData(["Test", null, 10f, "Standard", "Standard is required"])]
-	[InlineData(["Test", 5, null, "Price", "Price is required"])]
+	[InlineData(["", 5, 10f, OpResult.BadRequestCode, "Name is required"])]
+	[InlineData(["Test", null, 10f, OpResult.BadRequestCode, "Standard is required"])]
+	[InlineData(["Test", 5, null, OpResult.BadRequestCode, "Price is required"])]
 	public async Task TestForInvalidCategoriesErrors(string Name, int? Standard, float? Price, string ErrorKey, string ErrorMessage)
 	{
 		var category = new InputCategory
@@ -177,8 +178,8 @@ public class CategoriesTest : BaseUnitTest
 
 		result.Succeeded.ShouldBeFalse();
 		result.Errors.ShouldNotBeNull();
-		result.Errors.ShouldContainKey("Standard");
-		result.Errors["Standard"].ShouldBe($"Failed to add Category with Standard: {category.Standard}");
+		result.Errors.ShouldContainKey(OpResult.ServerErrorCode);
+		result.Errors[OpResult.ServerErrorCode].ShouldBe($"Failed to add Category with Standard: {category.Standard}");
 
 	}
 	///////////////////////////////////////////////////////////////////////////////////
@@ -207,13 +208,13 @@ public class CategoriesTest : BaseUnitTest
 
 		result.Succeeded.ShouldBeTrue();
 		var returnedCategory = result.Value;
-		var expectedCategory = new Category
+		var expectedCategory = new CategoryDTO
 		{
 			Id = 1,
 			Name = "Test",
 			Standard = 5,
 			Price = 10,
-			IsPrimary = true
+			Type = CategoryDTO.Primary
 		};
 		returnedCategory.ShouldBeEquivalentTo(expectedCategory);
 
@@ -252,13 +253,13 @@ public class CategoriesTest : BaseUnitTest
 
 		result.Succeeded.ShouldBeTrue();
 		var returnedCategory = result.Value;
-		var expectedCategory = new Category
+		var expectedCategory = new CategoryDTO
 		{
 			Id = 1,
 			Name = "Base Category",
 			Standard = 10,
 			Price = 10,
-			IsPrimary = true
+			Type = CategoryDTO.Primary
 		};
 		returnedCategory.ShouldBeEquivalentTo(expectedCategory);
 
