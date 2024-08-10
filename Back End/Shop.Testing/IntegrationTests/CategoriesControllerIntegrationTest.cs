@@ -1,5 +1,6 @@
 using System.Net;
-using Shop.Models;
+using Shop.Models.Contracts;
+using Shop.Models.DB;
 using Shop.Testing.Helpers;
 using Shouldly;
 
@@ -180,7 +181,7 @@ public class CategoriesControllerUnitTest : BaseIntegrationTest
 		var responseObject = await result.Content.ReadFromJsonAsync<Dictionary<string, string>>();
 		responseObject.ShouldNotBeNull();
 		responseObject.ShouldContainKey("Standard");
-		responseObject["Standard"].ShouldBe($"Category with Standard: {category.Standard} already exists");
+		responseObject["Standard"].ShouldBe($"Failed to add Category with Standard: {category.Standard}");
 
 	}
 	///////////////////////////////////////////////////////////////////////////////////

@@ -21,7 +21,7 @@ public class BaseIntegrationTest : IClassFixture<BaseWebAppFactory>
 	{
 		using (var scope = _factory.Services.CreateScope())
 		{
-			var db = scope.ServiceProvider.GetRequiredService<SQLiteContext>();
+			var db = scope.ServiceProvider.GetRequiredService<AppDBContext>();
 			db.Database.EnsureDeleted();
 			db.Database.Migrate();
 		}

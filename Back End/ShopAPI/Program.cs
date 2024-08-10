@@ -6,14 +6,14 @@ using Shop.Authentication.Services;
 using Shop.DataAccess;
 using Shop.DataAccess.Interfaces;
 using Shop.DataAccess.Services;
-using Shop.Models;
+using Shop.Models.DB;
 
 var builder = WebApplication.CreateBuilder(args);
 
 void ApplyMigrations(IApplicationBuilder app)
 {
     using var scope = app.ApplicationServices.CreateScope();
-    var context = scope.ServiceProvider.GetRequiredService<SQLiteContext>();
+    var context = scope.ServiceProvider.GetRequiredService<AppDBContext>();
     context.Database.Migrate();
 }
 
@@ -43,15 +43,14 @@ builder.Services.AddScoped<RoleManager<IdentityRole<int>>>();
 builder.Services.AddScoped<ITokenService, TestTokenService>();
 builder.Services.AddScoped<IUserService, SQLUserService>();
 builder.Services.AddIdentity<User, IdentityRole<int>>()
-.AddEntityFrameworkStores<SQLiteContext>();
+                .AddEntityFrameworkStores<AppDBContext>();
 builder.Services.AddAuthorization(); // Add authorization services
 builder.Services.AddAuthentication(); // Add authorization services
 
-builder.Services.AddDbContext<SQLiteContext>(options =>
-options.UseSqlite(builder.Configuration.GetConnectionString("SqliteDatabase")
-));
+builder.Services.AddDbContext<AppDBContext>();
 
-builder.Services.AddScoped<ICategoriesService, SQLCategoriesService>();
+builder.Services.AddScoped<ICategoriesService, CategoriesService>();
+builder.Services.AddScoped<IGroupsService, GroupsService>();
 
 builder.Services.AddControllers();
 

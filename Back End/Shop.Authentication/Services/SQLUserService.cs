@@ -8,7 +8,8 @@ using Shop.Authentication;
 using Shop.Authentication.Interfaces;
 using Shop.Authentication.Services;
 using Shop.DataAccess.Interfaces;
-using Shop.Models;
+using Shop.Models.Contracts;
+using Shop.Models.DB;
 
 namespace Shop.DataAccess.Services;
 
@@ -16,14 +17,14 @@ public class SQLUserService : AuthenticationStateProvider, IUserService
 {
     private readonly SignInManager<User> _signInManager;
     private readonly ITokenService _tokenService;
-    private readonly SQLiteContext _context;
+    private readonly AppDBContext _context;
     private readonly DbSet<User> _users;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
 
     public SQLUserService(SignInManager<User> signInManager,
                           ITokenService tokenService,
-                          SQLiteContext context,
+                          AppDBContext context,
                           IHttpContextAccessor httpContextAccessor)
     {
         _signInManager = signInManager;

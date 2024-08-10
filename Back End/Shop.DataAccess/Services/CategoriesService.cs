@@ -1,14 +1,17 @@
 using Microsoft.EntityFrameworkCore;
 using Shop.DataAccess.Interfaces;
-using Shop.Models;
+using Shop.Models.DB;
+using Shop.Models.Contracts;
 
 namespace Shop.DataAccess.Services;
 
-public class SQLCategoriesService : ICategoriesService
-{
-	private readonly SQLiteContext _context;
+//TODO: Check All SaveChangesAsync
 
-	public SQLCategoriesService(SQLiteContext context)
+public class CategoriesService : ICategoriesService
+{
+	private readonly AppDBContext _context;
+
+	public CategoriesService(AppDBContext context)
 	{
 		_context = context;
 	}
@@ -18,11 +21,7 @@ public class SQLCategoriesService : ICategoriesService
 		var category = await _context.Categories.FirstOrDefaultAsync(c => c.IsPrimary);
 		if (category == null)
 		{
-			return new OpResult<Category>
-			{
-				Succeeded = false,
-				Errors = new Dictionary<string, string> { { "Base", "Base Category not found" } }
-			};
+			return OpResult<Category>.NotFound("Base Category not found");
 		}
 		return new OpResult<Category> { Value = category };
 	}
@@ -32,11 +31,7 @@ public class SQLCategoriesService : ICategoriesService
 		var category = await _context.Categories.FirstOrDefaultAsync(c => c.IsPrimary);
 		if (category == null)
 		{
-			return new OpResult<Category>
-			{
-				Succeeded = false,
-				Errors = new Dictionary<string, string> { { "Base", "Base Category not found" } }
-			};
+			return OpResult<Category>.NotFound("Base Category not found");
 		}
 		var tempCategory = new InputCategory { Price = price };
 		return await UpdateExisting(tempCategory, category.Id);
@@ -53,11 +48,7 @@ public class SQLCategoriesService : ICategoriesService
 		var category = await _context.Categories.FindAsync(id);
 		if (category == null)
 		{
-			return new OpResult<Category>
-			{
-				Succeeded = false,
-				Errors = new Dictionary<string, string> { { "Id", "Category not found" } }
-			};
+			return OpResult<Category>.NotFound("Category not found");
 		}
 		return new OpResult<Category> { Value = category };
 	}
@@ -78,19 +69,11 @@ public class SQLCategoriesService : ICategoriesService
 	{
 		if (string.IsNullOrEmpty(category.Name))
 		{
-			return new OpResult<Category>
-			{
-				Succeeded = false,
-				Errors = new Dictionary<string, string> { { "Name", "Name is required" } }
-			};
+			return OpResult<Category>.BadRequest("Name is required");
 		}
 		if (!category.Standard.HasValue)
 		{
-			return new OpResult<Category>
-			{
-				Succeeded = false,
-				Errors = new Dictionary<string, string> { { "Standard", "Standard is required" } }
-			};
+			return OpResult<Category>.BadRequest("Standard is required");
 		}
 		var baseCategory = await _context.Categories.FirstOrDefaultAsync(c => c.IsPrimary);
 		float price;
@@ -99,11 +82,7 @@ public class SQLCategoriesService : ICategoriesService
 		{
 			if (category.Price == null)
 			{
-				return new OpResult<Category>
-				{
-					Succeeded = false,
-					Errors = new Dictionary<string, string> { { "Price", "Price is required" } }
-				};
+				return OpResult<Category>.BadRequest("Price is required");
 			}
 			price = category.Price.Value;
 		}
@@ -125,11 +104,7 @@ public class SQLCategoriesService : ICategoriesService
 		}
 		catch (DbUpdateException)
 		{
-			return new OpResult<Category>
-			{
-				Succeeded = false,
-				Errors = new Dictionary<string, string> { { "Standard", $"Category with Standard: {category.Standard} already exists" } }
-			};
+			return OpResult<Category>.ServerError($"Failed to add Category with Standard: {category.Standard}");
 		}
 		return new OpResult<Category> { Value = newCategory };
 	}
@@ -139,11 +114,7 @@ public class SQLCategoriesService : ICategoriesService
 		var existingCategory = await _context.Categories.FindAsync(id);
 		if (existingCategory == null)
 		{
-			return new OpResult<Category>
-			{
-				Succeeded = false,
-				Errors = new Dictionary<string, string> { { "Id", "Category not found" } }
-			};
+			return OpResult<Category>.NotFound("Category not found");
 		}
 		existingCategory.Name = category.Name ?? existingCategory.Name;
 		if (existingCategory.IsPrimary)
@@ -180,29 +151,21 @@ public class SQLCategoriesService : ICategoriesService
 		}
 		catch (DbUpdateException)
 		{
-			return new OpResult<Category>
-			{
-				Succeeded = false,
-				Errors = new Dictionary<string, string> { { "Standard", $"Category with Standard: {category.Standard} already exists" } }
-			};
+			return OpResult<Category>.ServerError($"Failed to update Category with Standard: {category.Standard}");
 		}
 		return new OpResult<Category> { Value = existingCategory };
 	}
 
-	public async Task<OpResult<object>> DeleteCategoryAsync(int id)
+	public async Task<OpResult> DeleteCategoryAsync(int id)
 	{
 		var existingCategory = await _context.Categories.FindAsync(id);
 		if (existingCategory == null)
 		{
-			return new OpResult<object>
-			{
-				Succeeded = false,
-				Errors = new Dictionary<string, string> { { "Id", "Category not found" } }
-			};
+			return OpResult.NotFound("Category not found");
 		}
 		_context.Categories.Remove(existingCategory);
 		await _context.SaveChangesAsync();
-		return new OpResult<object> { };
+		return new OpResult();
 	}
 
 	public async Task<OpResult<Category>> ChangeBaseCategoryAsync(int id)
@@ -210,11 +173,7 @@ public class SQLCategoriesService : ICategoriesService
 		var existingCategory = await _context.Categories.FindAsync(id);
 		if (existingCategory == null)
 		{
-			return new OpResult<Category>
-			{
-				Succeeded = false,
-				Errors = new Dictionary<string, string> { { "Id", "Category not found" } }
-			};
+			return OpResult<Category>.NotFound("Category not found");
 		}
 		var baseCategory = await _context.Categories.FirstAsync(c => c.IsPrimary);
 		baseCategory.IsPrimary = false;

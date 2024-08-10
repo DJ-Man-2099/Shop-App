@@ -2,17 +2,18 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Shop.Models;
+using Shop.Models.DB;
 
 namespace Shop.DataAccess;
 
-public class SQLiteContext : IdentityDbContext<User, IdentityRole<int>, int>
+public class AppDBContext : IdentityDbContext<User, IdentityRole<int>, int>
 {
 
 	protected readonly IConfiguration? Configuration;
 
-	public SQLiteContext(IConfiguration? configuration = null, DbContextOptions<SQLiteContext>? options = null) : base(options ?? new DbContextOptions<SQLiteContext>())
+	public AppDBContext(
+		IConfiguration? configuration = null,
+		DbContextOptions<AppDBContext>? options = null) : base(options ?? new DbContextOptions<AppDBContext>())
 	{
 		if (configuration != null)
 		{ Configuration = configuration; }
@@ -26,21 +27,13 @@ public class SQLiteContext : IdentityDbContext<User, IdentityRole<int>, int>
 		}
 	}
 
-
-	// Default constructor (For migrations)
-	// public SQLiteContext()
-	// {
-	// 	var builder = new ConfigurationBuilder()
-	// 		.SetBasePath(AppContext.BaseDirectory)
-	// 		.AddJsonFile("appsettings.json");
-
-	// 	Configuration = builder.Build();
-	// }
-
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{
-		optionsBuilder.UseSqlite(Configuration?.GetConnectionString("SqliteDatabase"),
+		var dbType = Configuration?.GetConnectionString("DefaultDatabase");
+
+		optionsBuilder.UseSqlite(Configuration?.GetConnectionString(dbType!),
 		b => b.MigrationsAssembly("Shop.DataAccess"));
+
 		base.OnConfiguring(optionsBuilder);
 	}
 

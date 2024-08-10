@@ -9,7 +9,7 @@ using Shop.DataAccess;
 
 namespace Shop.DataAccess.Migrations
 {
-    [DbContext(typeof(SQLiteContext))]
+    [DbContext(typeof(AppDBContext))]
     partial class SQLiteContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

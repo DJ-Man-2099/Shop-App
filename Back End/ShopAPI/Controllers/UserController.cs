@@ -1,9 +1,8 @@
-using System;
 using Microsoft.AspNetCore.Mvc;
 using Shop.Authentication;
 using Shop.Authentication.Services;
 using Shop.DataAccess.Interfaces;
-using Shop.Models;
+using Shop.Models.Contracts;
 
 namespace ShopAPI.Controllers;
 [Route("api/[controller]")]

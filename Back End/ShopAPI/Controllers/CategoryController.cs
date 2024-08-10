@@ -1,8 +1,8 @@
-using System;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Shop.Authentication;
+using Shop.Authentication.Services;
 using Shop.DataAccess.Interfaces;
-using Shop.Models;
+using Shop.Models.Contracts;
 
 namespace ShopAPI.Controllers;
 
@@ -10,24 +10,26 @@ namespace ShopAPI.Controllers;
 [ApiController]
 public class CategoryController : ControllerBase
 {
-	private readonly ICategoriesService _categoriesService;
+	private readonly ICategoriesService _service;
 
 	public CategoryController(ICategoriesService categoriesService)
 	{
-		_categoriesService = categoriesService;
+		_service = categoriesService;
 	}
 
 	[HttpGet]
+	[TokenAuthorize]
 	public async Task<IActionResult> GetCategories()
 	{
-		var result = await _categoriesService.GetCategoriesAsync();
+		var result = await _service.GetCategoriesAsync();
 		return Ok(result.Value!);
 	}
 
 	[HttpGet("base")]
+	[TokenAuthorize]
 	public async Task<IActionResult> GetBaseCategory()
 	{
-		var result = await _categoriesService.GetBaseCategoryAsync();
+		var result = await _service.GetBaseCategoryAsync();
 		if (!result.Succeeded)
 		{
 			return NotFound(result.Errors!);
@@ -36,9 +38,10 @@ public class CategoryController : ControllerBase
 	}
 
 	[HttpGet("{id:int}")]
+	[TokenAuthorize]
 	public async Task<IActionResult> GetCategory(int id)
 	{
-		var result = await _categoriesService.GetCategoryAsync(id);
+		var result = await _service.GetCategoryAsync(id);
 		if (!result.Succeeded)
 		{
 			return NotFound(result.Errors!);
@@ -48,35 +51,49 @@ public class CategoryController : ControllerBase
 
 	[HttpPost]
 	[HttpPatch("{id:int}")]
+	[TokenAuthorize]
 	public async Task<IActionResult> UpsertCategory(InputCategory category, int? id)
 	{
-		var result = await _categoriesService.UpsertCategoryAsync(category, id);
+		var result = await _service.UpsertCategoryAsync(category, id);
 		if (result.Succeeded)
 		{
 			return Ok(result.Value!);
 		}
 		else
 		{
-			return BadRequest(result.Errors!);
+			if (result.Errors!.ContainsKey(OpResult.NotFoundCode))
+			{
+				return NotFound(result.Errors[OpResult.NotFoundCode]);
+			}
+			else if (result.Errors!.ContainsKey(OpResult.ServerErrorCode))
+			{
+				return StatusCode(500, result.Errors[OpResult.ServerErrorCode]);
+			}
+			return BadRequest(result.Errors[OpResult.BadRequestCode]);
 		}
 	}
 
 	[HttpPatch("base")]
+	[TokenAuthorize(roles: [Roles.Admin])]
 	public async Task<IActionResult> SetBaseCategoryPrice(PriceUpdateModel price)
 	{
-		Console.WriteLine(price.Price);
-		var result = await _categoriesService.SetBaseCategoryPriceAsync(price.Price);
+		var result = await _service.SetBaseCategoryPriceAsync(price.Price);
 		if (!result.Succeeded)
 		{
-			return NotFound(result.Errors!);
+			if (result.Errors!.ContainsKey(OpResult.NotFoundCode))
+			{
+				return NotFound(result.Errors[OpResult.NotFoundCode]);
+			}
+			return StatusCode(500, result.Errors[OpResult.ServerErrorCode]);
 		}
 		return Ok(result.Value!);
 	}
 
 	[HttpDelete("{id:int}")]
+	[TokenAuthorize(roles: [Roles.Admin])]
 	public async Task<IActionResult> DeleteCategory(int id)
 	{
-		var result = await _categoriesService.DeleteCategoryAsync(id);
+		var result = await _service.DeleteCategoryAsync(id);
 		if (!result.Succeeded)
 		{
 			return NotFound(result.Errors!);
@@ -85,9 +102,10 @@ public class CategoryController : ControllerBase
 	}
 
 	[HttpPost("changebase/{id:int}")]
+	[TokenAuthorize(roles: [Roles.Admin])]
 	public async Task<IActionResult> ChangeBaseCategory(int id)
 	{
-		var result = await _categoriesService.ChangeBaseCategoryAsync(id);
+		var result = await _service.ChangeBaseCategoryAsync(id);
 		if (!result.Succeeded)
 		{
 			return NotFound(result.Errors!);

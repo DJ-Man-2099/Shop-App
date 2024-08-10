@@ -7,11 +7,11 @@ namespace Shop.Testing.Helpers;
 
 public class BaseUnitTest
 {
-	protected readonly SQLiteContext _context;
+	protected readonly AppDBContext _context;
 	public BaseUnitTest()
 	{
-		DbContextOptions<SQLiteContext> _dbContextOptions;
-		var builder = new DbContextOptionsBuilder<SQLiteContext>();
+		DbContextOptions<AppDBContext> _dbContextOptions;
+		var builder = new DbContextOptionsBuilder<AppDBContext>();
 		var config = TestConfiguration.GetConfiguration();
 		var connection = new SqliteConnection(config.GetConnectionString("UnitDatabase"));
 		_dbContextOptions = builder.UseSqlite(connection).Options;

@@ -1,5 +1,6 @@
 using Shop.DataAccess.Services;
-using Shop.Models;
+using Shop.Models.Contracts;
+using Shop.Models.DB;
 using Shop.Testing.Helpers;
 using Shouldly;
 
@@ -7,10 +8,10 @@ namespace Shop.Testing;
 
 public class CategoriesTest : BaseUnitTest
 {
-	private readonly SQLCategoriesService _service;
+	private readonly CategoriesService _service;
 	public CategoriesTest() : base()
 	{
-		_service = new SQLCategoriesService(_context);
+		_service = new CategoriesService(_context);
 	}
 
 	// Get Operations
@@ -177,7 +178,7 @@ public class CategoriesTest : BaseUnitTest
 		result.Succeeded.ShouldBeFalse();
 		result.Errors.ShouldNotBeNull();
 		result.Errors.ShouldContainKey("Standard");
-		result.Errors["Standard"].ShouldBe($"Category with Standard: {category.Standard} already exists");
+		result.Errors["Standard"].ShouldBe($"Failed to add Category with Standard: {category.Standard}");
 
 	}
 	///////////////////////////////////////////////////////////////////////////////////

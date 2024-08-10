@@ -1,5 +1,5 @@
-using System;
-using Shop.Models;
+using Shop.Models.Contracts;
+using Shop.Models.DB;
 
 namespace Shop.DataAccess.Interfaces;
 
@@ -14,7 +14,7 @@ public interface ICategoriesService
 
 	Task<OpResult<Category>> UpsertCategoryAsync(InputCategory category, int? id);
 
-	Task<OpResult<object>> DeleteCategoryAsync(int id);
+	Task<OpResult> DeleteCategoryAsync(int id);
 
 	Task<OpResult<Category>> ChangeBaseCategoryAsync(int id);
 

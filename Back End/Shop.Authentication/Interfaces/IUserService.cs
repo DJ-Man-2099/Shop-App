@@ -1,5 +1,6 @@
 using System;
-using Shop.Models;
+using Shop.Models.DB;
+using Shop.Models.Contracts;
 
 namespace Shop.DataAccess.Interfaces;
 

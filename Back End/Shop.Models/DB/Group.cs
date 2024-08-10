@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Shop.Models;
+namespace Shop.Models.DB;
 
 public class Group
 {
@@ -13,8 +13,7 @@ public class Group
 	[Required]
 	public virtual required Category Category { get; set; }
 
-	[Required]
-	public required int CategoryId { get; set; }
+	public int CategoryId { get; set; }
 
 	public virtual ICollection<Product>? Products { get; set; }
 

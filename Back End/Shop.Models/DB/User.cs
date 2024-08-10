@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 
-namespace Shop.Models;
+namespace Shop.Models.DB;
 
 public class User : IdentityUser<int>
 {

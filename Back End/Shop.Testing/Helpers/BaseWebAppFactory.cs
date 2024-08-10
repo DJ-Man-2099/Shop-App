@@ -14,7 +14,7 @@ public class BaseWebAppFactory : WebApplicationFactory<Program>
 			// Remove the app's ApplicationDbContext registration.
 			var descriptor = services.SingleOrDefault(
 				d => d.ServiceType ==
-					typeof(DbContextOptions<SQLiteContext>));
+					typeof(DbContextOptions<AppDBContext>));
 
 			if (descriptor != null)
 			{
@@ -27,7 +27,7 @@ public class BaseWebAppFactory : WebApplicationFactory<Program>
 			var connection = new SqliteConnection(config.GetConnectionString("IntegrationDatabase"));
 			services.AddScoped(provider =>
 			{
-				var context = new SQLiteContext(options: new DbContextOptionsBuilder<SQLiteContext>()
+				var context = new AppDBContext(options: new DbContextOptionsBuilder<AppDBContext>()
 					.UseSqlite(connection)
 					.Options);
 				return context;

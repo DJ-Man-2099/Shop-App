@@ -10,7 +10,7 @@ using Shop.DataAccess;
 
 namespace Shop.DataAccess.Migrations
 {
-    [DbContext(typeof(SQLiteContext))]
+    [DbContext(typeof(AppDBContext))]
     [Migration("20240805084104_AddStandardToCategory")]
     partial class AddStandardToCategory
     {

@@ -1,5 +1,6 @@
 using System;
-using Shop.Models;
+using Shop.Models.Contracts;
+using Shop.Models.DB;
 
 namespace Shop.Authentication.Interfaces;
 

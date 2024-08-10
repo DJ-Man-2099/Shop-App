@@ -1,6 +1,4 @@
-using System;
-
-namespace Shop.Models;
+namespace Shop.Models.Contracts;
 
 public class UserUpdateDTO
 {

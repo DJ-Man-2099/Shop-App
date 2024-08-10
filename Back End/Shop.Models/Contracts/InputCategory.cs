@@ -1,7 +1,4 @@
-using System;
-using System.ComponentModel.DataAnnotations;
-
-namespace Shop.Models;
+namespace Shop.Models.Contracts;
 
 public class InputCategory
 {

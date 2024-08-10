@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Shop.Authentication.Interfaces;
-using Shop.Models;
+using Shop.Models.DB;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 //
@@ -33,7 +33,7 @@ public class TokenAuthorizeAttribute : Attribute, IAuthorizationFilter
 
 	public async void OnAuthorization(AuthorizationFilterContext context)
 	{
-		Console.WriteLine("OnAuthorization");
+		// Console.WriteLine("OnAuthorization");
 		var tokenService = context.HttpContext.RequestServices.GetRequiredService<ITokenService>();
 		var signInManager = context.HttpContext.RequestServices.GetRequiredService<SignInManager<User>>();
 		var token = context.HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
