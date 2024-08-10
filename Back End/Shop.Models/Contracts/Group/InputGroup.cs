@@ -1,6 +1,6 @@
 using Shop.Models.DB;
 
-namespace Shop.Models.Contracts;
+namespace Shop.Models.Contracts.Group;
 
 public class InputGroup
 {

@@ -1,4 +1,4 @@
-namespace Shop.Models.Contracts;
+namespace Shop.Models.Contracts.Category;
 
 public class InputCategory
 {

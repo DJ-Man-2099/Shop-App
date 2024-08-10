@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Shop.Authentication;
 using Shop.Authentication.Services;
 using Shop.DataAccess.Interfaces;
-using Shop.Models.Contracts;
+using Shop.Models.Contracts.User;
 
 namespace ShopAPI.Controllers;
 [Route("api/[controller]")]
@@ -43,7 +43,7 @@ public class UserController : ControllerBase
 
 	[HttpPost]
 	[TokenAuthorize(roles: [Roles.Admin])]
-	public async Task<IActionResult> SignUpWorkerUser(SignUpDTO user)
+	public async Task<IActionResult> SignUpWorkerUser(InputSignUpUser user)
 	{
 		var result = await _userService.SignUpWorkerAsync(user);
 		if (result.Succeeded)
@@ -55,7 +55,7 @@ public class UserController : ControllerBase
 
 	[HttpPost("admin")]
 	[TokenAuthorize(roles: [Roles.Admin])]
-	public async Task<IActionResult> SignUpAdminUser(SignUpDTO user)
+	public async Task<IActionResult> SignUpAdminUser(InputSignUpUser user)
 	{
 		var result = await _userService.SignUpAdminAsync(user);
 		if (result.Succeeded)

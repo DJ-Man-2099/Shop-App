@@ -1,5 +1,5 @@
 using Shop.Models.Contracts;
-using Shop.Models.DB;
+using Shop.Models.Contracts.Group;
 
 namespace Shop.DataAccess.Interfaces;
 

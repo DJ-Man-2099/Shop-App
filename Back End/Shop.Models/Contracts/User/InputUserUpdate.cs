@@ -1,5 +1,4 @@
-namespace Shop.Models.Contracts;
-
+namespace Shop.Models.Contracts.User;
 public class UserUpdateDTO
 {
 	public string? FirstName { get; set; }

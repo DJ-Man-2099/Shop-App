@@ -3,6 +3,7 @@ using Shop.Authentication;
 using Shop.Authentication.Services;
 using Shop.DataAccess.Interfaces;
 using Shop.Models.Contracts;
+using Shop.Models.Contracts.Group;
 
 namespace ShopAPI.Controllers;
 

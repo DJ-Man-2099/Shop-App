@@ -2,6 +2,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Shop.DataAccess.Interfaces;
 using Shop.Models.Contracts;
+using Shop.Models.Contracts.Group;
 using Shop.Models.DB;
 
 namespace Shop.DataAccess.Services;

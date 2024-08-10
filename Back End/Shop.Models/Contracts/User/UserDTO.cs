@@ -1,5 +1,4 @@
-namespace Shop.Models.Contracts;
-
+namespace Shop.Models.Contracts.User;
 public class UserDTO
 {
 	public required string FirstName { get; set; }

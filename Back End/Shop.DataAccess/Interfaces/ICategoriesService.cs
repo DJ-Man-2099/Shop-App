@@ -1,4 +1,5 @@
 using Shop.Models.Contracts;
+using Shop.Models.Contracts.Category;
 using Shop.Models.DB;
 
 namespace Shop.DataAccess.Interfaces;

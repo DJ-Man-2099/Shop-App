@@ -1,4 +1,3 @@
-using System;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -9,6 +8,7 @@ using Shop.Authentication.Interfaces;
 using Shop.Authentication.Services;
 using Shop.DataAccess.Interfaces;
 using Shop.Models.Contracts;
+using Shop.Models.Contracts.User;
 using Shop.Models.DB;
 
 namespace Shop.DataAccess.Services;
@@ -164,7 +164,7 @@ public class SQLUserService : AuthenticationStateProvider, IUserService
         };
     }
 
-    private async Task<OpResult<User>> CreateNewUser(SignUpDTO user)
+    private async Task<OpResult<User>> CreateNewUser(InputSignUpUser user)
     {
         var existingUser = await _signInManager.UserManager.FindByNameAsync(user.UserName);
         if (existingUser != null)
@@ -203,7 +203,7 @@ public class SQLUserService : AuthenticationStateProvider, IUserService
         };
     }
 
-    private async Task<OpResult<UserDTO>> SignUpAsync(SignUpDTO user, string role)
+    private async Task<OpResult<UserDTO>> SignUpAsync(InputSignUpUser user, string role)
     {
         var result = await CreateNewUser(user);
         if (!result.Succeeded)
@@ -227,11 +227,11 @@ public class SQLUserService : AuthenticationStateProvider, IUserService
         };
     }
 
-    public async Task<OpResult<UserDTO>> SignUpWorkerAsync(SignUpDTO user)
+    public async Task<OpResult<UserDTO>> SignUpWorkerAsync(InputSignUpUser user)
     {
         return await SignUpAsync(user, role: Roles.Worker);
     }
-    public async Task<OpResult<UserDTO>> SignUpAdminAsync(SignUpDTO user)
+    public async Task<OpResult<UserDTO>> SignUpAdminAsync(InputSignUpUser user)
     {
         return await SignUpAsync(user, role: Roles.Admin);
     }

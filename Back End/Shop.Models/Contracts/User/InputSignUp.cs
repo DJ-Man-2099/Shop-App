@@ -1,6 +1,6 @@
-namespace Shop.Models.Contracts;
+namespace Shop.Models.Contracts.User;
 
-public class SignUpDTO
+public class InputSignUpUser
 {
 	public required string FirstName { get; set; }
 	public required string LastName { get; set; }
