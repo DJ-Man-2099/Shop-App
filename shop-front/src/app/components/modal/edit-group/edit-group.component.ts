@@ -89,4 +89,17 @@ export class EditGroupComponent implements OnInit {
   onDismiss() {
     this.modal.dismiss();
   }
+
+  onDelete() {
+    if (confirm('هل انت متأكد من رغبتك في الغاء المنتج؟')) {
+      this.onAccept();
+    }
+  }
+  async onAccept() {
+    var res = await this.groupService.DeleteGroup(this.editGroup.id);
+    if (res.ok) {
+      this.groupService.changeGroups.emit();
+      this.modal.dismiss();
+    }
+  }
 }

@@ -32,4 +32,8 @@ export class GroupService {
       this.http.patch<GroupOutput>(`api/Group/${id}`, group)
     );
   }
+
+  async DeleteGroup(id: number): Promise<HttpResponse<GroupOutput>> {
+    return firstValueFrom(this.http.delete<GroupOutput>(`api/Group/${id}`));
+  }
 }
