@@ -1,145 +1,59 @@
 import { EventEmitter, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { catchError, firstValueFrom, of } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 
 import { Category, returnedCategory } from '../interfaces/category';
+import { SimpleHttpClientService } from './simple-http-client.service';
+import { HttpResponse } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CategoryService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: SimpleHttpClientService) {}
 
   changeCateogryPrices = new EventEmitter<void>();
   changeBaseCategoryEvent = new EventEmitter<void>();
 
-  getBaseCategory() {
+  getBaseCategory(): Promise<HttpResponse<returnedCategory>> {
+    return firstValueFrom(this.http.get<returnedCategory>('api/Category/base'));
+  }
+
+  getAllCategories(): Promise<HttpResponse<returnedCategory[]>> {
+    return firstValueFrom(this.http.get<returnedCategory[]>('api/Category'));
+  }
+
+  changeBaseCategoryPrice(
+    price: number
+  ): Promise<HttpResponse<returnedCategory>> {
     return firstValueFrom(
-      this.http
-        .get<returnedCategory>('api/Category/base', {
-          observe: 'response',
-        })
-        .pipe(
-          catchError((err) =>
-            of({
-              ok: false,
-              error: err,
-              body: undefined,
-            })
-          )
-        )
+      this.http.patch<returnedCategory>('api/Category/base', { price })
     );
   }
 
-  getAllCategories() {
+  addCategory(baseCategory: Category): Promise<HttpResponse<returnedCategory>> {
     return firstValueFrom(
-      this.http
-        .get<returnedCategory[]>('api/Category', {
-          observe: 'response',
-        })
-        .pipe(
-          catchError((err) =>
-            of({
-              ok: false,
-              error: err,
-              body: undefined,
-            })
-          )
-        )
+      this.http.post<returnedCategory>('api/Category', baseCategory)
     );
   }
 
-  changeBaseCategoryPrice(price: number) {
+  editCategory(
+    id: number,
+    baseCategory: Category
+  ): Promise<HttpResponse<returnedCategory>> {
     return firstValueFrom(
-      this.http
-        .patch<returnedCategory>(
-          'api/Category/base',
-          { price },
-          {
-            observe: 'response',
-          }
-        )
-        .pipe(
-          catchError((err) =>
-            of({
-              ok: false,
-              error: err,
-              body: undefined,
-            })
-          )
-        )
+      this.http.patch<returnedCategory>(`api/Category/${id}`, baseCategory)
     );
   }
 
-  addCategory(baseCategory: Category) {
+  deleteCategory(id: number): Promise<HttpResponse<returnedCategory>> {
     return firstValueFrom(
-      this.http
-        .post<returnedCategory>('api/Category', baseCategory, {
-          observe: 'response',
-        })
-        .pipe(
-          catchError((err) =>
-            of({
-              ok: false,
-              error: err,
-              body: undefined,
-            })
-          )
-        )
+      this.http.delete<returnedCategory>(`api/Category/${id}`)
     );
   }
 
-  editCategory(id: number, baseCategory: Category) {
+  changeBaseCategory(id: number): Promise<HttpResponse<returnedCategory>> {
     return firstValueFrom(
-      this.http
-        .patch<returnedCategory>(`api/Category/${id}`, baseCategory, {
-          observe: 'response',
-        })
-        .pipe(
-          catchError((err) =>
-            of({
-              ok: false,
-              error: err,
-              body: undefined,
-            })
-          )
-        )
-    );
-  }
-
-  deleteCategory(id: number) {
-    return firstValueFrom(
-      this.http
-        .delete<returnedCategory>(`api/Category/${id}`, {
-          observe: 'response',
-        })
-        .pipe(
-          catchError((err) =>
-            of({
-              ok: false,
-              error: err,
-              body: undefined,
-            })
-          )
-        )
-    );
-  }
-
-  changeBaseCategory(id: number) {
-    return firstValueFrom(
-      this.http
-        .post<returnedCategory>(`api/Category/changebase/${id}`, null, {
-          observe: 'response',
-        })
-        .pipe(
-          catchError((err) =>
-            of({
-              ok: false,
-              error: err,
-              body: undefined,
-            })
-          )
-        )
+      this.http.post<returnedCategory>(`api/Category/changebase/${id}`, null)
     );
   }
 }

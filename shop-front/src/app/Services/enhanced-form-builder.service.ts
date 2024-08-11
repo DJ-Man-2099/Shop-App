@@ -5,6 +5,7 @@ type enhancedFormControlDef = {
   [name: string]: {
     type: string;
     displayName: string;
+    options?: { value: any; label: string }[];
     controls: [any, ValidatorFn | ValidatorFn[] | null | undefined];
   };
 };
@@ -17,6 +18,7 @@ export type FormKeys = {
   key: string;
   type: string;
   displayName: string;
+  options?: { value: any; label: string }[];
 };
 
 @Injectable({
@@ -32,6 +34,7 @@ export class EnhancedFormBuilderService {
     const tempControls = Object.keys(formControls).reduce<formControlDef>(
       (acc, key) => {
         acc[key] = formControls[key].controls;
+
         return acc;
       },
       {}
@@ -43,7 +46,8 @@ export class EnhancedFormBuilderService {
     return Object.keys(this.origControls).reduce<FormKeys[]>((acc, key) => {
       const type = this.origControls[key].type;
       const displayName = this.origControls[key].displayName;
-      acc.push({ key, type, displayName });
+      const options = this.origControls[key].options;
+      acc.push({ key, type, displayName, options });
       return acc;
     }, []);
   }

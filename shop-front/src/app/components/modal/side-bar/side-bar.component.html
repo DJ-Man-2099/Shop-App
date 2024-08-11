@@ -14,5 +14,6 @@
 		@for(link of links; track link){
 		<button (click)="goto(link.path)" class="list-group-item">{{link.name}}</button>
 		}
+		<button (click)="logout()" class="list-group-item">تسجيل الخروج</button>
 	</ul>
 </div>

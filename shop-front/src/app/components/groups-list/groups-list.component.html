@@ -1,0 +1,24 @@
+<div class="card d-flex flex-column flex-fill gap-3 p-2">
+	<div class="title d-flex align-items-center justify-content-between w-100">قائمة المجموعات
+		<button class="btn btn-info" [disabled]="groups.length===0" (click)="addNewGroup()">إضافة مجموعة
+			جديدة</button>
+	</div>
+	<div class="table-holder">
+		<table class="table-primary table table-hover table-striped table-bordered ">
+			<thead>
+				<tr class="border-top-0">
+					<th scope="col">الأسم</th>
+					<th scope="col">العيار</th>
+				</tr>
+			</thead>
+			<tbody class="table-group-divider overflow-y-scroll">
+				@for(group of groups; track group.id){
+				<tr (click)="editGroup(group)">
+					<td class="table-data">{{group.name}}</td>
+					<td class="table-data">{{group.category.name}}</td>
+				</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+</div>
