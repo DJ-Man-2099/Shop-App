@@ -13,7 +13,7 @@ using Shop.Models.DB;
 
 namespace Shop.DataAccess.Services;
 
-public class SQLUserService : AuthenticationStateProvider, IUserService
+public class UserService : AuthenticationStateProvider, IUserService
 {
     private readonly SignInManager<User> _signInManager;
     private readonly ITokenService _tokenService;
@@ -22,7 +22,7 @@ public class SQLUserService : AuthenticationStateProvider, IUserService
     private readonly IHttpContextAccessor _httpContextAccessor;
 
 
-    public SQLUserService(SignInManager<User> signInManager,
+    public UserService(SignInManager<User> signInManager,
                           ITokenService tokenService,
                           AppDBContext context,
                           IHttpContextAccessor httpContextAccessor)
@@ -52,7 +52,7 @@ public class SQLUserService : AuthenticationStateProvider, IUserService
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        var token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString();
+        var token = _httpContextAccessor.HttpContext!.Request.Headers["Authorization"].ToString();
         if (string.IsNullOrEmpty(token))
         {
             return GetNullState();
@@ -99,7 +99,7 @@ public class SQLUserService : AuthenticationStateProvider, IUserService
         var roles = await _signInManager.UserManager.GetRolesAsync(user);
         return new OpResult<UserDTO>
         {
-            Value = UserDTOFromUser(user, roles)
+            Value = UserDTO.FromUser(user, roles)
         };
     }
 
@@ -112,7 +112,7 @@ public class SQLUserService : AuthenticationStateProvider, IUserService
         foreach (var user in result)
         {
             var roles = await _signInManager.UserManager.GetRolesAsync(user);
-            users.Add(UserDTOFromUser(user, roles));
+            users.Add(UserDTO.FromUser(user, roles));
         }
 
         return new OpResult<IEnumerable<UserDTO>>
@@ -121,26 +121,20 @@ public class SQLUserService : AuthenticationStateProvider, IUserService
         };
     }
 
-    public async Task<OpResult<UserDTO>> SignInAsync(string userName, string password)
+    public async Task<OpResult<UserDTO>> SignInAsync(InputSignIn signIn)
     {
+        var userName = signIn.UserName;
+        var password = signIn.Password;
         var user = await _signInManager.UserManager.FindByNameAsync(userName);
         if (user == null)
         {
-            return new OpResult<UserDTO>
-            {
-                Succeeded = false,
-                Errors = new Dictionary<string, string> { { "UserName", "User Name not Found" } }
-            };
+            return OpResult<UserDTO>.NotFound("User Name not Found");
         }
 
-        var result = await _signInManager.CheckPasswordSignInAsync(user, password, false);
+        var result = await _signInManager.PasswordSignInAsync(user, password, false, false);
         if (!result.Succeeded)
         {
-            return new OpResult<UserDTO>
-            {
-                Succeeded = false,
-                Errors = new Dictionary<string, string> { { "Password", "Incorrect Password" } }
-            };
+            return OpResult<UserDTO>.BadRequest("Incorrect Password");
         }
 
         var roles = await _signInManager.UserManager.GetRolesAsync(user);
@@ -148,23 +142,11 @@ public class SQLUserService : AuthenticationStateProvider, IUserService
 
         return new OpResult<UserDTO>
         {
-            Value = UserDTOFromUser(user, roles, token)
+            Value = UserDTO.FromUser(user, roles, token)
         };
     }
 
-    private static UserDTO UserDTOFromUser(User user, IList<string> roles, string? token = null)
-    {
-        return new UserDTO
-        {
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            id = user.Id,
-            roles = [.. roles],
-            token = token
-        };
-    }
-
-    private async Task<OpResult<User>> CreateNewUser(InputSignUpUser user)
+    private async Task<OpResult<User>> CreateNewUser(InputSignUp user)
     {
         var existingUser = await _signInManager.UserManager.FindByNameAsync(user.UserName);
         if (existingUser != null)
@@ -203,7 +185,7 @@ public class SQLUserService : AuthenticationStateProvider, IUserService
         };
     }
 
-    private async Task<OpResult<UserDTO>> SignUpAsync(InputSignUpUser user, string role)
+    private async Task<OpResult<UserDTO>> SignUpAsync(InputSignUp user, string role)
     {
         var result = await CreateNewUser(user);
         if (!result.Succeeded)
@@ -223,15 +205,15 @@ public class SQLUserService : AuthenticationStateProvider, IUserService
 
         return new OpResult<UserDTO>
         {
-            Value = UserDTOFromUser(currentUser, [role], generatedToken)
+            Value = UserDTO.FromUser(currentUser, [role], generatedToken)
         };
     }
 
-    public async Task<OpResult<UserDTO>> SignUpWorkerAsync(InputSignUpUser user)
+    public async Task<OpResult<UserDTO>> SignUpWorkerAsync(InputSignUp user)
     {
         return await SignUpAsync(user, role: Roles.Worker);
     }
-    public async Task<OpResult<UserDTO>> SignUpAdminAsync(InputSignUpUser user)
+    public async Task<OpResult<UserDTO>> SignUpAdminAsync(InputSignUp user)
     {
         return await SignUpAsync(user, role: Roles.Admin);
     }

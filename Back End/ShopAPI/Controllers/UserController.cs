@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shop.Authentication;
 using Shop.Authentication.Services;
 using Shop.DataAccess.Interfaces;
+using Shop.Models.Contracts;
 using Shop.Models.Contracts.User;
 
 namespace ShopAPI.Controllers;
@@ -18,7 +20,7 @@ public class UserController : ControllerBase
 	}
 
 	[HttpGet("{id:int}")]
-	[TokenAuthorize]
+	[Authorize]
 	public async Task<IActionResult> GetUserById(int id)
 	{
 		var result = await _userService.GetUserByIdAsync(id);
@@ -30,7 +32,8 @@ public class UserController : ControllerBase
 	}
 
 	[HttpGet]
-	[TokenAuthorize]
+	[Authorize(Roles = Roles.Admin)]
+	// [Authorize]
 	public async Task<IActionResult> GetUsers()
 	{
 		var result = await _userService.GetUsersAsync();
@@ -42,8 +45,8 @@ public class UserController : ControllerBase
 	}
 
 	[HttpPost]
-	[TokenAuthorize(roles: [Roles.Admin])]
-	public async Task<IActionResult> SignUpWorkerUser(InputSignUpUser user)
+	// [Authorize(Roles = Roles.Admin)]
+	public async Task<IActionResult> SignUpWorkerUser(InputSignUp user)
 	{
 		var result = await _userService.SignUpWorkerAsync(user);
 		if (result.Succeeded)
@@ -54,8 +57,8 @@ public class UserController : ControllerBase
 	}
 
 	[HttpPost("admin")]
-	[TokenAuthorize(roles: [Roles.Admin])]
-	public async Task<IActionResult> SignUpAdminUser(InputSignUpUser user)
+	// [Authorize(Roles = Roles.Admin)]
+	public async Task<IActionResult> SignUpAdminUser(InputSignUp user)
 	{
 		var result = await _userService.SignUpAdminAsync(user);
 		if (result.Succeeded)
@@ -66,7 +69,7 @@ public class UserController : ControllerBase
 	}
 
 	[HttpPatch("{id:int}")]
-	[TokenAuthorize(roles: [Roles.Admin])]
+	[Authorize(Roles = Roles.Admin)]
 	public async Task<IActionResult> UpdateUser(int id, UserUpdateDTO user)
 	{
 		var result = await _userService.UpdateUserAsync(id, user);
@@ -78,7 +81,7 @@ public class UserController : ControllerBase
 	}
 
 	[HttpDelete("{id:int}")]
-	[TokenAuthorize(roles: [Roles.Admin])]
+	[Authorize(Roles = Roles.Admin)]
 	public async Task<IActionResult> DeleteUser(int id)
 	{
 		var result = await _userService.DeleteUserById(id);
@@ -89,4 +92,18 @@ public class UserController : ControllerBase
 		return NotFound(result.Errors);
 	}
 
+	[HttpPost("login")]
+	public async Task<IActionResult> SignIn(InputSignIn signIn)
+	{
+		var result = await _userService.SignInAsync(signIn);
+		if (result.Succeeded)
+		{
+			return Ok(result.Value);
+		}
+		if (result.Errors!.ContainsKey(OpResult.NotFoundCode))
+		{
+			return NotFound(result.Errors[OpResult.NotFoundCode]);
+		}
+		return BadRequest(result.Errors[OpResult.BadRequestCode]);
+	}
 }

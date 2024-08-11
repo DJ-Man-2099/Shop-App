@@ -19,21 +19,21 @@ public class GroupController : ControllerBase
 	}
 
 	[HttpGet]
-	[TokenAuthorize]
+	[Authorize]
 	public async Task<IActionResult> GetAllGroups()
 	{
 		var result = await _service.GetGroupsAsync();
 		return Ok(result.Value!);
 	}
 	[HttpGet("category/{id:int}")]
-	[TokenAuthorize]
+	[Authorize]
 	public async Task<IActionResult> GetGroupsByCategoryId(int id)
 	{
 		var result = await _service.GetGroupsByCategoryIdAsync(id);
 		return Ok(result.Value!);
 	}
 	[HttpGet("{id:int}")]
-	[TokenAuthorize]
+	[Authorize]
 	public async Task<IActionResult> GetGroup(int id)
 	{
 		var result = await _service.GetGroupAsync(id);
@@ -46,7 +46,7 @@ public class GroupController : ControllerBase
 
 	[HttpPost]
 	[HttpPatch("{id:int}")]
-	[TokenAuthorize(roles: [Roles.Admin])]
+	[Authorize(Roles = Roles.Admin)]
 	public async Task<IActionResult> UpsertGroup(InputGroup group, int? id = null)
 	{
 		var result = await _service.UpsertGroupAsync(group, id);
@@ -62,7 +62,7 @@ public class GroupController : ControllerBase
 	}
 
 	[HttpDelete("{id:int}")]
-	[TokenAuthorize]
+	[Authorize]
 	public async Task<IActionResult> DeleteGroup(int id)
 	{
 		var result = await _service.DeleteGroupAsync(id);

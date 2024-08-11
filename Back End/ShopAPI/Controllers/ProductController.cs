@@ -19,7 +19,7 @@ public class ProductController : ControllerBase
 	}
 
 	[HttpGet]
-	[TokenAuthorize]
+	[Authorize]
 	public async Task<IActionResult> GetAllProducts()
 	{
 		var result = await _service.GetAllProductsAsync();
@@ -30,7 +30,7 @@ public class ProductController : ControllerBase
 		return Ok(result.Value!);
 	}
 	[HttpGet("{id:int}")]
-	[TokenAuthorize]
+	[Authorize]
 	public async Task<IActionResult> GetProductById(int id)
 	{
 		var result = await _service.GetProductByIdAsync(id);
@@ -41,7 +41,7 @@ public class ProductController : ControllerBase
 		return Ok(result.Value!);
 	}
 	[HttpGet("group/{groupId:int}")]
-	[TokenAuthorize]
+	[Authorize]
 	public async Task<IActionResult> GetProductsByGroupId(int groupId)
 	{
 		var result = await _service.GetProductsByGroupIdAsync(groupId);
@@ -52,7 +52,7 @@ public class ProductController : ControllerBase
 		return Ok(result.Value!);
 	}
 	[HttpGet("category/{categoryId:int}")]
-	[TokenAuthorize]
+	[Authorize]
 	public async Task<IActionResult> GetProductsByCategoryId(int categoryId)
 	{
 		var result = await _service.GetProductsByCategoryIdAsync(categoryId);
@@ -64,7 +64,7 @@ public class ProductController : ControllerBase
 	}
 	[HttpPost]
 	[HttpPatch("{id:int}")]
-	[TokenAuthorize(roles: [Roles.Admin])]
+	[Authorize(Roles = Roles.Admin)]
 	public async Task<IActionResult> UpsertProduct(InputProduct product, int? id = null)
 	{
 		var result = await _service.UpsertProduct(product, id);
@@ -83,7 +83,7 @@ public class ProductController : ControllerBase
 		return Ok(result.Value!);
 	}
 	[HttpDelete("{id:int}")]
-	[TokenAuthorize(roles: [Roles.Admin])]
+	[Authorize(Roles = Roles.Admin)]
 	public async Task<IActionResult> DeleteProductById(int id)
 	{
 		var result = await _service.DeleteProduct(id);

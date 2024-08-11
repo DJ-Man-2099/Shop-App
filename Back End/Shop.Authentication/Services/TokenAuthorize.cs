@@ -33,7 +33,6 @@ public class TokenAuthorizeAttribute : Attribute, IAuthorizationFilter
 
 	public async void OnAuthorization(AuthorizationFilterContext context)
 	{
-		// Console.WriteLine("OnAuthorization");
 		var tokenService = context.HttpContext.RequestServices.GetRequiredService<ITokenService>();
 		var signInManager = context.HttpContext.RequestServices.GetRequiredService<SignInManager<User>>();
 		var token = context.HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
@@ -49,13 +48,13 @@ public class TokenAuthorizeAttribute : Attribute, IAuthorizationFilter
 			context.Result = new Microsoft.AspNetCore.Mvc.UnauthorizedResult();
 			return;
 		}
-		// var user = userValidation.Value!;
-		// var userRoles = await signInManager.UserManager.GetRolesAsync(user);
+		var user = userValidation.Value!;
+		var userRoles = await signInManager.UserManager.GetRolesAsync(user);
 
-		// if (_roles.Length > 0 && !_roles.Any(userRoles.Contains))
-		// {
-		// 	context.Result = new Microsoft.AspNetCore.Mvc.ForbidResult();
-		// 	return;
-		// }
+		if (_roles.Length > 0 && !_roles.Any(userRoles.Contains))
+		{
+			context.Result = new Microsoft.AspNetCore.Mvc.ForbidResult();
+			return;
+		}
 	}
 }

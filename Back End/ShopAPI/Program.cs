@@ -11,6 +11,7 @@ using Shop.DataAccess.Services;
 using Shop.Models.DB;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,8 +45,9 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<SignInManager<User>>();
 builder.Services.AddScoped<RoleManager<IdentityRole<int>>>();
-builder.Services.AddScoped<ITokenService, TestTokenService>();
-builder.Services.AddScoped<IUserService, SQLUserService>();
+builder.Services.AddScoped<ITokenService, JWTTokenService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<JwtSecurityTokenHandler>();
 builder.Services.AddIdentity<User, IdentityRole<int>>()
                 .AddEntityFrameworkStores<AppDBContext>();
 builder.Services.AddAuthorization(); // Add authorization services

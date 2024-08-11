@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shop.Authentication;
 using Shop.Authentication.Services;
@@ -19,7 +20,7 @@ public class CategoryController : ControllerBase
 	}
 
 	[HttpGet]
-	[TokenAuthorize]
+	[Authorize]
 	public async Task<IActionResult> GetCategories()
 	{
 		var result = await _service.GetCategoriesAsync();
@@ -27,7 +28,7 @@ public class CategoryController : ControllerBase
 	}
 
 	[HttpGet("base")]
-	[TokenAuthorize]
+	[Authorize]
 	public async Task<IActionResult> GetBaseCategory()
 	{
 		var result = await _service.GetBaseCategoryAsync();
@@ -39,7 +40,7 @@ public class CategoryController : ControllerBase
 	}
 
 	[HttpGet("{id:int}")]
-	[TokenAuthorize]
+	[Authorize]
 	public async Task<IActionResult> GetCategory(int id)
 	{
 		var result = await _service.GetCategoryAsync(id);
@@ -52,7 +53,7 @@ public class CategoryController : ControllerBase
 
 	[HttpPost]
 	[HttpPatch("{id:int}")]
-	[TokenAuthorize]
+	[Authorize]
 	public async Task<IActionResult> UpsertCategory(InputCategory category, int? id = null)
 	{
 		var result = await _service.UpsertCategoryAsync(category, id);
@@ -75,7 +76,7 @@ public class CategoryController : ControllerBase
 	}
 
 	[HttpPatch("base")]
-	[TokenAuthorize(roles: [Roles.Admin])]
+	[Authorize(Roles = Roles.Admin)]
 	public async Task<IActionResult> SetBaseCategoryPrice(PriceUpdateModel price)
 	{
 		var result = await _service.SetBaseCategoryPriceAsync(price.Price);
@@ -91,7 +92,7 @@ public class CategoryController : ControllerBase
 	}
 
 	[HttpDelete("{id:int}")]
-	[TokenAuthorize(roles: [Roles.Admin])]
+	[Authorize(Roles = Roles.Admin)]
 	public async Task<IActionResult> DeleteCategory(int id)
 	{
 		var result = await _service.DeleteCategoryAsync(id);
@@ -103,7 +104,7 @@ public class CategoryController : ControllerBase
 	}
 
 	[HttpPost("changebase/{id:int}")]
-	[TokenAuthorize(roles: [Roles.Admin])]
+	[Authorize(Roles = Roles.Admin)]
 	public async Task<IActionResult> ChangeBaseCategory(int id)
 	{
 		var result = await _service.ChangeBaseCategoryAsync(id);
