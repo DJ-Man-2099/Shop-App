@@ -3,6 +3,7 @@ import { GroupOutput } from '../../interfaces/group';
 import { GroupService } from '../../Services/group.service';
 import { ModalNavigateService } from '../../Services/modal-navigate.service';
 import { AddNewGroupComponent } from '../modal/add-new-group/add-new-group.component';
+import { EditGroupComponent } from '../modal/edit-group/edit-group.component';
 
 @Component({
   selector: 'app-groups-list',
@@ -42,9 +43,9 @@ export class GroupsListComponent {
   }
 
   editGroup(group: GroupOutput) {
-    // this.modal.goToModal(
-    //   [EditCategoryComponent.Path, group.id!.toString()],
-    //   group
-    // );
+    this.modal.goToModal(
+      [EditGroupComponent.Path, group.id!.toString()],
+      group
+    );
   }
 }

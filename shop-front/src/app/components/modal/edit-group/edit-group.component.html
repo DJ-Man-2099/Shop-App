@@ -1,0 +1,31 @@
+<div class="card">
+	@if(isLoading){
+	<app-loading />
+	}@else {
+	<div class="card-header">تعديل مجموعة {{editGroup.name}}</div>
+	<div class="card-body">
+		<form class="d-flex flex-column gap-2" [formGroup]="newGroupForm" (ngSubmit)="onSubmit()">
+			@for(control of newGroupFormControlNames; track control.key){
+			<div class="d-flex align-items-center">
+				<label class="col-4" for="{{control.key}}"> {{control.displayName}} </label>
+				@if(control.type === 'select'){
+				<select class="form-control" id="{{control.key}}" formControlName="{{control.key}}">
+					@for(option of control.options!; track option.value){
+					<option [value]="option.value">{{option.label}}</option>
+					}
+				</select>
+				}@else{
+				<input class="form-control" type="{{control.type}}" id="{{control.key}}"
+					formControlName="{{control.key}}" />
+				}
+			</div>
+			}
+			<div class="d-flex justify-content-between align-items-center">
+				<button class="btn btn-primary" type="submit" [disabled]="newGroupForm.invalid">تعديل</button>
+				<button class="btn btn-danger" type="button" (click)="onDismiss()">اغلاق الصفحة</button>
+			</div>
+
+		</form>
+	</div>
+	}
+</div>

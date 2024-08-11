@@ -9,9 +9,11 @@ import { MainPageComponent } from './components/main-page/main-page.component';
 import { AddNewGroupComponent } from './components/modal/add-new-group/add-new-group.component';
 import { AddNewProductComponent } from './components/modal/add-new-product/add-new-product.component';
 import { GroupsListComponent } from './components/groups-list/groups-list.component';
+import { EditGroupComponent } from './components/modal/edit-group/edit-group.component';
 
 export const routes: Routes = [
   {
+    pathMatch: 'full',
     path: LoginComponent.Path,
     component: LoginComponent,
   },
@@ -45,6 +47,11 @@ export const routes: Routes = [
       {
         path: AddNewGroupComponent.Path,
         component: AddNewGroupComponent,
+        outlet: 'modal',
+      },
+      {
+        path: `${EditGroupComponent.Path}/:id`,
+        component: EditGroupComponent,
         outlet: 'modal',
       },
       {

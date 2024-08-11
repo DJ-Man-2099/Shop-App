@@ -23,4 +23,13 @@ export class GroupService {
   async AddNewGroup(group: GroupInput): Promise<HttpResponse<GroupOutput>> {
     return firstValueFrom(this.http.post<GroupOutput>('api/Group', group));
   }
+
+  async EditGroup(
+    id: number,
+    group: GroupInput
+  ): Promise<HttpResponse<GroupOutput>> {
+    return firstValueFrom(
+      this.http.patch<GroupOutput>(`api/Group/${id}`, group)
+    );
+  }
 }

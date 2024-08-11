@@ -31,8 +31,6 @@ export class CategoriesListComponent implements OnInit {
   }
 
   addNewCategory() {
-    console.log('Routing');
-
     this.modal.goToModal([AddnewcategoryComponent.Path]);
   }
 
