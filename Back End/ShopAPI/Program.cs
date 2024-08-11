@@ -12,6 +12,8 @@ using Shop.Models.DB;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Shop.Models.Contracts;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,10 +49,10 @@ builder.Services.AddScoped<SignInManager<User>>();
 builder.Services.AddScoped<RoleManager<IdentityRole<int>>>();
 builder.Services.AddScoped<ITokenService, JWTTokenService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<BlackListTokenService>();
 builder.Services.AddScoped<JwtSecurityTokenHandler>();
 builder.Services.AddIdentity<User, IdentityRole<int>>()
                 .AddEntityFrameworkStores<AppDBContext>();
-builder.Services.AddAuthorization(); // Add authorization services
 builder.Services
     .AddAuthentication(
         options =>
@@ -74,9 +76,32 @@ builder.Services
                 ValidAudience = builder.Configuration["JwtConfig:Audience"],
                 ValidateIssuer = true
             };
-        }); // Add authorization services
+
+
+            jwtOptions.Events = new JwtBearerEvents
+            {
+                OnTokenValidated = async context =>
+                {
+                    var tokenService = context.HttpContext.RequestServices.GetRequiredService<ITokenService>();
+                    var result = await tokenService.ValidateToken(context.SecurityToken);
+                    if (!result.Succeeded)
+                    {
+                        context.Fail(result.Errors![OpResult.UnAuthenticatedErrorCode]);
+                        return;
+                    }
+                    var user = result.Value!;
+
+                    context.Principal = new ClaimsPrincipal(user);
+                }
+            };
+        });
+
+// Add Authentication
+builder.Services.AddAuthorization();// Add authorization services
 
 builder.Services.AddDbContext<AppDBContext>();
+builder.Services.AddDbContext<TokenBlacklistDBContext>(options =>
+    options.UseSqlite("Data Source=../Shop.Authentication/token.db", b => b.MigrationsAssembly("ShopAPI")));
 
 builder.Services.AddScoped<ICategoriesService, CategoriesService>();
 builder.Services.AddScoped<IGroupsService, GroupsService>();
@@ -134,7 +159,14 @@ app.MapGet("/weatherforecast", () =>
 app.UseCors("AllowLocalhost4200");
 app.UseAuthentication();
 app.UseAuthorization();
+app.Use(async (context, next) =>
+{
+    Console.WriteLine(context.User.Identity?.AuthenticationType);
+    await next.Invoke();
+});
+
 app.MapControllers();
+
 app.Run();
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)

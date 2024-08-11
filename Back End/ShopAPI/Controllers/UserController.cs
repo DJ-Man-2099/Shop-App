@@ -1,10 +1,13 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Shop.Authentication;
 using Shop.Authentication.Services;
 using Shop.DataAccess.Interfaces;
 using Shop.Models.Contracts;
 using Shop.Models.Contracts.User;
+using Shop.Models.DB;
 
 namespace ShopAPI.Controllers;
 [Route("api/[controller]")]
@@ -13,14 +16,16 @@ namespace ShopAPI.Controllers;
 public class UserController : ControllerBase
 {
 	private readonly IUserService _userService;
+	private readonly BlackListTokenService _blacklist;
 
-	public UserController(IUserService userService)
+	public UserController(IUserService userService, SignInManager<User> signInManager, BlackListTokenService blacklist)
 	{
 		_userService = userService;
+		_blacklist = blacklist;
 	}
 
 	[HttpGet("{id:int}")]
-	[Authorize]
+	[Authorize(Roles = Roles.Admin)]
 	public async Task<IActionResult> GetUserById(int id)
 	{
 		var result = await _userService.GetUserByIdAsync(id);
@@ -33,7 +38,6 @@ public class UserController : ControllerBase
 
 	[HttpGet]
 	[Authorize(Roles = Roles.Admin)]
-	// [Authorize]
 	public async Task<IActionResult> GetUsers()
 	{
 		var result = await _userService.GetUsersAsync();
@@ -45,7 +49,7 @@ public class UserController : ControllerBase
 	}
 
 	[HttpPost]
-	// [Authorize(Roles = Roles.Admin)]
+	[Authorize(Roles = Roles.Admin)]
 	public async Task<IActionResult> SignUpWorkerUser(InputSignUp user)
 	{
 		var result = await _userService.SignUpWorkerAsync(user);
@@ -57,7 +61,7 @@ public class UserController : ControllerBase
 	}
 
 	[HttpPost("admin")]
-	// [Authorize(Roles = Roles.Admin)]
+	[Authorize(Roles = Roles.Admin)]
 	public async Task<IActionResult> SignUpAdminUser(InputSignUp user)
 	{
 		var result = await _userService.SignUpAdminAsync(user);
@@ -105,5 +109,14 @@ public class UserController : ControllerBase
 			return NotFound(result.Errors[OpResult.NotFoundCode]);
 		}
 		return BadRequest(result.Errors[OpResult.BadRequestCode]);
+	}
+	[HttpPost("logout")]
+	[Authorize]
+	public async new Task<IActionResult> SignOut()
+	{
+		var Token = await HttpContext.GetTokenAsync("access_token");
+		_blacklist.AddTokenToBlacklist(Token!);
+		return Ok();
+
 	}
 }

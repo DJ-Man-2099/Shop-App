@@ -14,5 +14,4 @@ public interface IUserService
 	public Task<OpResult> DeleteUserById(int id);
 	public Task<OpResult<UserDTO>> SignInAsync(InputSignIn user);
 	public Task<OpResult> UpdateUserAsync(int id, UserUpdateDTO user);
-
 }

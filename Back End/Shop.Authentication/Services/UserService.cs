@@ -58,23 +58,14 @@ public class UserService : AuthenticationStateProvider, IUserService
             return GetNullState();
         }
 
-        var tokenData = _tokenService.ValidateToken(token);
+        var tokenData = await _tokenService.ValidateStringToken(token);
         if (!tokenData.Succeeded)
         {
             return GetNullState();
         }
 
-        var user = tokenData.Value!;
+        var claimsIdentity = tokenData.Value!;
 
-        var claims = new List<Claim>{
-            new Claim(ClaimTypes.Name, user.UserName!),
-        };
-        var roles = await _signInManager.UserManager.GetRolesAsync(user);
-        foreach (var role in roles)
-        {
-            claims.Add(new Claim(ClaimTypes.Role, role));
-        }
-        var claimsIdentity = new ClaimsIdentity(claims, "InAppLogin");
         var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
         return new AuthenticationState(claimsPrincipal);
@@ -269,4 +260,5 @@ public class UserService : AuthenticationStateProvider, IUserService
 
         return new OpResult { Succeeded = true };
     }
+
 }

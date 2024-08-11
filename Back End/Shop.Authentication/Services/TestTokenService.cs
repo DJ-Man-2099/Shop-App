@@ -2,6 +2,8 @@ using System;
 using Shop.Authentication.Interfaces;
 using Shop.Models.DB;
 using Shop.Models.Contracts;
+using System.Security.Claims;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Shop.Authentication.Services;
 
@@ -11,6 +13,11 @@ public class TestTokenService : ITokenService
 	public string GenerateToken(User user)
 	{
 		return _token;
+	}
+
+	public Task<OpResult<ClaimsIdentity>> ValidateStringToken(string token)
+	{
+		throw new NotImplementedException();
 	}
 
 	public OpResult<User> ValidateToken(string token)
@@ -30,5 +37,10 @@ public class TestTokenService : ITokenService
 				{ "Token", "Invalid token" }
 			}
 		};
+	}
+
+	public Task<OpResult<ClaimsIdentity>> ValidateToken(SecurityToken token)
+	{
+		throw new NotImplementedException();
 	}
 }

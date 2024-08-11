@@ -2,7 +2,9 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using Shop.Authentication.Interfaces;
 using Shop.DataAccess;
@@ -14,20 +16,22 @@ namespace Shop.Authentication.Services;
 public class JWTTokenService : ITokenService
 {
 	private readonly JwtSecurityTokenHandler _tokenHandler;
-	private readonly AppDBContext _context;
+	private readonly SignInManager<User> _signInManager;
+	private readonly BlackListTokenService _blacklistService;
 	private readonly string _key;
 	private readonly byte[] _encodedKey;
 	private readonly string _issuer;
 	private readonly string _audience;
 
-	public JWTTokenService(JwtSecurityTokenHandler tokenHandler, AppDBContext context, IConfiguration configuration)
+	public JWTTokenService(JwtSecurityTokenHandler tokenHandler, SignInManager<User> signInManager, IConfiguration configuration, BlackListTokenService blacklistService)
 	{
 		_tokenHandler = tokenHandler;
-		_context = context;
+		_signInManager = signInManager;
 		_key = configuration["JwtConfig:Key"]!;
 		_issuer = configuration["JwtConfig:Issuer"]!;
 		_audience = configuration["JwtConfig:Audience"]!;
 		_encodedKey = Encoding.ASCII.GetBytes(_key);
+		_blacklistService = blacklistService;
 	}
 
 	public string GenerateToken(User user)
@@ -45,12 +49,14 @@ public class JWTTokenService : ITokenService
 		return _tokenHandler.WriteToken(token);
 	}
 
-	public OpResult<User> ValidateToken(string token)
+	public async Task<OpResult<ClaimsIdentity>> ValidateStringToken(string token)
 	{
 		if (token == null)
-			return OpResult<User>.UnAuthenticatedError("Token is null");
+			return OpResult<ClaimsIdentity>.UnAuthenticatedError("Token is invalid");
+
 		try
 		{
+
 			_tokenHandler.ValidateToken(token, new TokenValidationParameters
 			{
 				IssuerSigningKey = new SymmetricSecurityKey(_encodedKey),
@@ -61,20 +67,53 @@ public class JWTTokenService : ITokenService
 				ValidateIssuer = true
 			}, out SecurityToken validatedToken);
 
-			var jwtToken = (JwtSecurityToken)validatedToken;
-			var userId = int.Parse(jwtToken.Claims.First(x => x.Type == "id").Value);
-			var user = _context.Users.Find(userId);
+			return await ValidateToken(validatedToken);
+		}
+		catch
+		{
+			// return null if validation fails
+			return OpResult<ClaimsIdentity>.UnAuthenticatedError("Token is invalid");
+		}
 
-			// return user id from JWT token if validation successful
-			return new OpResult<User>
+	}
+
+	public async Task<OpResult<ClaimsIdentity>> ValidateToken(SecurityToken token)
+	{
+		Console.WriteLine(token.ToString()!);
+		Console.WriteLine(_blacklistService.IsTokenBlacklisted(token.UnsafeToString()!));
+		Console.WriteLine(string.Join(", ", _blacklistService.GetBlacklistedTokens().Select(t => t.Token)));
+		if (token == null || _blacklistService.IsTokenBlacklisted(token.UnsafeToString()!))
+			return OpResult<ClaimsIdentity>.UnAuthenticatedError("Token is null");
+		try
+		{
+
+			var jwtToken = (JsonWebToken)token;
+			// Console.WriteLine("This Fails here");
+			var userId = int.Parse(jwtToken.Claims.First(x => x.Type == "id").Value);
+			var user = await _signInManager.UserManager.FindByIdAsync(userId.ToString());
+			if (user == null)
+				return OpResult<ClaimsIdentity>.UnAuthenticatedError("User not found");
+			var claims = new List<Claim>
 			{
-				Value = user
+				new("id", userId.ToString()),
+				new(ClaimTypes.Name, user!.UserName!)
+			};
+			var roles = await _signInManager.UserManager.GetRolesAsync(user);
+			foreach (var role in roles)
+			{
+				claims.Add(new Claim(ClaimTypes.Role, role));
+			}
+			var identity = new ClaimsIdentity(claims, "jwt");
+			// return user id from JWT token if validation successful
+			return new OpResult<ClaimsIdentity>
+			{
+				Value = identity
 			};
 		}
 		catch
 		{
 			// return null if validation fails
-			return OpResult<User>.UnAuthenticatedError("Token is invalid");
+			return OpResult<ClaimsIdentity>.UnAuthenticatedError("Token is invalid");
 		}
 	}
 }

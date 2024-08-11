@@ -1,6 +1,3 @@
-using System;
-using Humanizer;
-
 namespace Shop.Authentication;
 
 public class Roles

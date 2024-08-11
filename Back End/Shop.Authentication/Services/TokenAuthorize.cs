@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Shop.Authentication.Interfaces;
 using Shop.Models.DB;
+using System.Security.Claims;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 //
@@ -42,14 +43,14 @@ public class TokenAuthorizeAttribute : Attribute, IAuthorizationFilter
 			context.Result = new Microsoft.AspNetCore.Mvc.UnauthorizedResult();
 			return;
 		}
-		var userValidation = tokenService.ValidateToken(token);
+		var userValidation = await tokenService.ValidateStringToken(token);
 		if (!userValidation.Succeeded)
 		{
 			context.Result = new Microsoft.AspNetCore.Mvc.UnauthorizedResult();
 			return;
 		}
 		var user = userValidation.Value!;
-		var userRoles = await signInManager.UserManager.GetRolesAsync(user);
+		var userRoles = user.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value);
 
 		if (_roles.Length > 0 && !_roles.Any(userRoles.Contains))
 		{
