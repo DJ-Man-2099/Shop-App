@@ -79,9 +79,6 @@ public class JWTTokenService : ITokenService
 
 	public async Task<OpResult<ClaimsIdentity>> ValidateToken(SecurityToken token)
 	{
-		Console.WriteLine(token.ToString()!);
-		Console.WriteLine(_blacklistService.IsTokenBlacklisted(token.UnsafeToString()!));
-		Console.WriteLine(string.Join(", ", _blacklistService.GetBlacklistedTokens().Select(t => t.Token)));
 		if (token == null || _blacklistService.IsTokenBlacklisted(token.UnsafeToString()!))
 			return OpResult<ClaimsIdentity>.UnAuthenticatedError("Token is null");
 		try
