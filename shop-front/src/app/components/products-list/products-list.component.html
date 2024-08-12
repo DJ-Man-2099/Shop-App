@@ -1,1 +1,30 @@
-<p>products-list works!</p>
+<div class="card d-flex flex-column flex-fill gap-3 p-2">
+	<div class="title d-flex align-items-center justify-content-between w-100">قائمة المنتجات
+		<button class="btn btn-info" [disabled]="products.length===0" (click)="addNewProduct()">إضافة منتج
+			جديد</button>
+	</div>
+	<div class="table-holder">
+		<table class="table-primary table table-hover table-striped table-bordered ">
+			<thead>
+				<tr class="border-top-0">
+					<th scope="col">الأسم</th>
+					<th scope="col">المجموعة</th>
+					<th scope="col">تعديل</th>
+				</tr>
+			</thead>
+			<tbody class="table-group-divider overflow-y-scroll">
+				@for(product of products; track product.id){
+				<tr class="align-middle" (click)="showProduct(product)">
+					<td class="table-data">{{product.name}}</td>
+					<td class="table-data">{{product.group.name}}</td>
+					<td class="table-data text-center">
+						<button class="btn btn-warning" (click)="editProduct(product, $event)">
+							<i class="bi bi-pencil-square" style="font-size: 30px!important;"></i>
+						</button>
+					</td>
+				</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+</div>

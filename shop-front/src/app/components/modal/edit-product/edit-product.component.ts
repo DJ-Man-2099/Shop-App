@@ -4,33 +4,48 @@ import {
   EnhancedFormBuilderService,
   FormKeys,
 } from '../../../Services/enhanced-form-builder.service';
+import { Location } from '@angular/common';
+
 import { ModalNavigateService } from '../../../Services/modal-navigate.service';
 import { GroupService } from '../../../Services/group.service';
 import { ProductService } from '../../../Services/product.service';
 import { LoadingComponent } from '../../loading/loading.component';
+import { ProductOutput } from '../../../interfaces/product';
 
 @Component({
-  selector: 'app-add-new-product',
+  selector: 'app-edit-product',
   standalone: true,
   imports: [ReactiveFormsModule, LoadingComponent],
-  templateUrl: './add-new-product.component.html',
-  styleUrl: './add-new-product.component.css',
+  templateUrl: './edit-product.component.html',
+  styleUrl: './edit-product.component.css',
 })
-export class AddNewProductComponent implements OnInit {
+export class EditProductComponent implements OnInit {
   static Path = 'add-new-product';
   isLoading = true;
 
   newProductForm!: FormGroup;
   newProductFormControlNames!: FormKeys[];
 
+  editProduct!: ProductOutput;
+
   constructor(
     private efb: EnhancedFormBuilderService,
     private modal: ModalNavigateService,
     private groupService: GroupService,
-    private productService: ProductService
+    private productService: ProductService,
+    private currentLocation: Location
   ) {}
 
   async ngOnInit() {
+    if (!this.currentLocation.getState()) {
+      this.onDismiss();
+      return;
+    }
+    const { data: product } = this.currentLocation.getState() as {
+      data: ProductOutput;
+    };
+
+    this.editProduct = product;
     var groups = await this.groupService.getAllGroups();
     if (!groups.ok) {
       console.log('error');
@@ -44,28 +59,40 @@ export class AddNewProductComponent implements OnInit {
       name: {
         type: 'text',
         displayName: 'أسم المنتج',
-        controls: ['', Validators.required],
+        controls: [this.editProduct.name, Validators.required],
       },
       manufacturePrice: {
         type: 'number',
         displayName: 'سعر التشغيلة',
-        controls: [0, [Validators.required, Validators.min(0)]],
+        controls: [
+          this.editProduct.manufacturePrice,
+          [Validators.required, Validators.min(0)],
+        ],
       },
       weightGrams: {
         type: 'number',
         displayName: 'الوزن بالجرامات',
-        controls: [0, [Validators.required, Validators.min(0)]],
+        controls: [
+          this.editProduct.weightGrams,
+          [Validators.required, Validators.min(0)],
+        ],
       },
       weightMilliGrams: {
         type: 'number',
         displayName: 'الوزن بالملليجرامات',
-        controls: [0, [Validators.required, Validators.min(0)]],
+        controls: [
+          this.editProduct.weightMilliGrams,
+          [Validators.required, Validators.min(0)],
+        ],
       },
       groupId: {
         type: 'select',
         displayName: 'المجموعة',
         options: options,
-        controls: [options![0].value, [Validators.required, Validators.min(0)]],
+        controls: [
+          this.editProduct.group.id,
+          [Validators.required, Validators.min(0)],
+        ],
       },
     });
 
@@ -74,12 +101,29 @@ export class AddNewProductComponent implements OnInit {
   }
 
   async onSubmit() {
-    var res = await this.productService.AddNewProduct(
+    var res = await this.productService.EditProduct(
+      this.editProduct.id,
       this.newProductForm.value
     );
     if (res.ok) {
       this.productService.changeProducts.emit();
       this.modal.dismiss();
+    }
+  }
+
+  onDelete() {
+    if (confirm('هل انت متأكد من رغبتك في الغاء المنتج؟')) {
+      this.onAccept();
+    }
+  }
+
+  async onAccept() {
+    const response = await this.productService.DeleteProduct(
+      this.editProduct.id!
+    );
+    if (response.ok) {
+      this.productService.changeProducts.emit();
+      this.onDismiss();
     }
   }
 

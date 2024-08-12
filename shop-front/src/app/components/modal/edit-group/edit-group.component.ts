@@ -10,7 +10,7 @@ import { ModalNavigateService } from '../../../Services/modal-navigate.service';
 import { GroupService } from '../../../Services/group.service';
 import { CategoryService } from '../../../Services/category.service';
 import { LoadingComponent } from '../../loading/loading.component';
-import { GroupInput, GroupOutput } from '../../../interfaces/group';
+import { GroupOutput } from '../../../interfaces/group';
 
 @Component({
   selector: 'app-edit-group',
@@ -91,7 +91,7 @@ export class EditGroupComponent implements OnInit {
   }
 
   onDelete() {
-    if (confirm('هل انت متأكد من رغبتك في الغاء المنتج؟')) {
+    if (confirm('هل انت متأكد من رغبتك في الغاء المجموعة؟')) {
       this.onAccept();
     }
   }

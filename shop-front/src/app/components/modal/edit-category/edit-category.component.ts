@@ -10,7 +10,6 @@ import {
 import { ModalNavigateService } from '../../../Services/modal-navigate.service';
 import { Category } from '../../../interfaces/category';
 import { LoadingComponent } from '../../loading/loading.component';
-import { MessageComponent } from '../message/message.component';
 
 @Component({
   selector: 'app-edit-category',
@@ -77,8 +76,6 @@ export class EditCategoryComponent {
   }
 
   async onSubmit() {
-    console.log(this.editCategory);
-
     const response = await this.categoryService.editCategory(
       this.editCategory.Id!,
       this.editCategoryForm.value

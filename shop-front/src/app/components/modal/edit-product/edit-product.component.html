@@ -2,7 +2,7 @@
 	@if(isLoading){
 	<app-loading />
 	}@else {
-	<div class="card-header">اضافة منتج جديد</div>
+	<div class="card-header">تعديل {{editProduct.name}}</div>
 	<div class="card-body">
 		<form class="d-flex flex-column gap-2" [formGroup]="newProductForm" (ngSubmit)="onSubmit()">
 			@for(control of newProductFormControlNames; track control.key){
@@ -21,8 +21,9 @@
 			</div>
 			}
 			<div class="d-flex justify-content-between align-items-center">
-				<button class="btn btn-primary" type="submit" [disabled]="newProductForm.invalid">إضافة</button>
-				<button class="btn btn-danger" type="button" (click)="onDismiss()">اغلاق الصفحة</button>
+				<button class="btn btn-primary" type="submit" [disabled]="newProductForm.invalid">تعديل</button>
+				<button class="btn btn-danger" type="button" (click)="onDelete()">الغاء المنتج</button>
+				<button class="btn btn-warning" type="button" (click)="onDismiss()">اغلاق الصفحة</button>
 			</div>
 
 		</form>

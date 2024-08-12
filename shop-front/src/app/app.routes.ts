@@ -10,6 +10,9 @@ import { AddNewGroupComponent } from './components/modal/add-new-group/add-new-g
 import { AddNewProductComponent } from './components/modal/add-new-product/add-new-product.component';
 import { GroupsListComponent } from './components/groups-list/groups-list.component';
 import { EditGroupComponent } from './components/modal/edit-group/edit-group.component';
+import { ShowProductInfoComponent } from './components/modal/show-product-info/show-product-info.component';
+import { ProductsListComponent } from './components/products-list/products-list.component';
+import { EditProductComponent } from './components/modal/edit-product/edit-product.component';
 
 export const routes: Routes = [
   {
@@ -28,6 +31,10 @@ export const routes: Routes = [
       {
         path: GroupsListComponent.Path,
         component: GroupsListComponent,
+      },
+      {
+        path: ProductsListComponent.Path,
+        component: ProductsListComponent,
       },
       {
         path: AddnewcategoryComponent.Path,
@@ -57,6 +64,16 @@ export const routes: Routes = [
       {
         path: AddNewProductComponent.Path,
         component: AddNewProductComponent,
+        outlet: 'modal',
+      },
+      {
+        path: `${ShowProductInfoComponent.Path}/:id`,
+        component: ShowProductInfoComponent,
+        outlet: 'modal',
+      },
+      {
+        path: `${EditProductComponent.Path}/:id`,
+        component: EditProductComponent,
         outlet: 'modal',
       },
       {

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { GroupOutput } from '../../interfaces/group';
 import { GroupService } from '../../Services/group.service';
 import { ModalNavigateService } from '../../Services/modal-navigate.service';
@@ -12,7 +12,7 @@ import { EditGroupComponent } from '../modal/edit-group/edit-group.component';
   templateUrl: './groups-list.component.html',
   styleUrl: './groups-list.component.css',
 })
-export class GroupsListComponent {
+export class GroupsListComponent implements OnInit {
   static Path = 'groups-list';
 
   groups: GroupOutput[] = [];
@@ -24,13 +24,13 @@ export class GroupsListComponent {
   ) {}
 
   ngOnInit() {
-    this.getAllCategories();
+    this.getAllGroups();
     this.groupService.changeGroups.subscribe(() => {
-      this.getAllCategories();
+      this.getAllGroups();
     });
   }
 
-  async getAllCategories() {
+  async getAllGroups() {
     const response = await this.groupService.getAllGroups();
     if (response.ok) {
       this.groups = response.body!;

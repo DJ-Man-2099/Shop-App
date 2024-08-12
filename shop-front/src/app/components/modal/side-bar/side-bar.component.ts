@@ -5,6 +5,7 @@ import { AppComponent } from '../../../app.component';
 import { Router, RouterModule } from '@angular/router';
 import { AuthenticationService } from '../../../Services/authentication.service';
 import { GroupsListComponent } from '../../groups-list/groups-list.component';
+import { ProductsListComponent } from '../../products-list/products-list.component';
 
 @Component({
   selector: 'app-side-bar',
@@ -20,6 +21,7 @@ export class SideBarComponent {
     { name: 'الصفحة الرئيسية', path: '' },
     { name: 'العيارات', path: CategoriesListComponent.Path },
     { name: 'المجموعات', path: GroupsListComponent.Path },
+    { name: 'المنتجات', path: ProductsListComponent.Path },
   ];
 
   constructor(

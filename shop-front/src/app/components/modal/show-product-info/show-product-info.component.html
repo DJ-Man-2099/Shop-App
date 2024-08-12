@@ -1,0 +1,17 @@
+<div class="card w-100">
+	<div class="card-header d-flex align-items-center justify-content-between">
+		<span>تفاصيل {{product.name}}</span>
+		<button class="btn" (click)="onDismiss()">
+			<i class="bi bi-x-lg"></i>
+		</button>
+	</div>
+	<div class="card-body">
+		<div class="row">
+			<span class="row"><span class="col-8">سعر التشغيلة:</span>{{product.manufacturePrice}} ج.م</span>
+			<span class="row"><span class="col-8">وزن المنتج بالجرام:</span>{{product.weightGrams}} جم</span>
+			<span class="row"><span class="col-8">وزن المنتج بالملليجرام:</span>{{product.weightMilliGrams}} مجم</span>
+			<span class="row"><span class="col-8">المجموعة:</span>{{product.group.name}}</span>
+			<span class="row"><span class="col-8">العيار:</span>{{product.group.category.name}}</span>
+		</div>
+	</div>
+</div>

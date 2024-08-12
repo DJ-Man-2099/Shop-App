@@ -16,24 +16,21 @@ export class GroupService {
 
   constructor(private http: SimpleHttpClientService) {}
 
-  async getAllGroups(): Promise<HttpResponse<Array<GroupOutput>>> {
+  async getAllGroups() {
     return firstValueFrom(this.http.get<Array<GroupOutput>>('api/Group'));
   }
 
-  async AddNewGroup(group: GroupInput): Promise<HttpResponse<GroupOutput>> {
+  async AddNewGroup(group: GroupInput) {
     return firstValueFrom(this.http.post<GroupOutput>('api/Group', group));
   }
 
-  async EditGroup(
-    id: number,
-    group: GroupInput
-  ): Promise<HttpResponse<GroupOutput>> {
+  async EditGroup(id: number, group: GroupInput) {
     return firstValueFrom(
       this.http.patch<GroupOutput>(`api/Group/${id}`, group)
     );
   }
 
-  async DeleteGroup(id: number): Promise<HttpResponse<GroupOutput>> {
+  async DeleteGroup(id: number) {
     return firstValueFrom(this.http.delete<GroupOutput>(`api/Group/${id}`));
   }
 }
