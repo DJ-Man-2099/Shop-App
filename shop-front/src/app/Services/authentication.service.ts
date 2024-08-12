@@ -41,7 +41,7 @@ export class AuthenticationService {
   }
   private _user!: InnerUser | null;
   public get user(): InnerUser | null {
-    if (!this._token && this.isBrowser) {
+    if ((!this._user || !this._token) && this.isBrowser) {
       this._user = {
         name: localStorage.getItem('name')!,
         role: localStorage.getItem('role')!,

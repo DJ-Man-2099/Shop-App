@@ -11,6 +11,7 @@ import {
 } from '../../Services/enhanced-form-builder.service';
 import { AuthenticationService } from '../../Services/authentication.service';
 import { Router } from '@angular/router';
+import { MainPageComponent } from '../main-page/main-page.component';
 
 @Component({
   selector: 'app-login',
@@ -50,7 +51,7 @@ export class LoginComponent implements OnInit {
   async onSubmit() {
     var res = await this.authService.login(this.loginForm.value);
     if (res.ok) {
-      this.router.navigate(['/']);
+      this.router.navigate([MainPageComponent.Path]);
     }
   }
 }

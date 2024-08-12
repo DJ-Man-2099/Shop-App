@@ -13,10 +13,16 @@ import { EditGroupComponent } from './components/modal/edit-group/edit-group.com
 import { ShowProductInfoComponent } from './components/modal/show-product-info/show-product-info.component';
 import { ProductsListComponent } from './components/products-list/products-list.component';
 import { EditProductComponent } from './components/modal/edit-product/edit-product.component';
+import { SignUpComponent } from './components/sign-up/sign-up.component';
+import { isPlatformBrowser } from '@angular/common';
+import { inject, PLATFORM_ID } from '@angular/core';
+
+// function isBrowser(): boolean {
+//   return isPlatformBrowser(inject(PLATFORM_ID));
+// }
 
 export const routes: Routes = [
   {
-    pathMatch: 'full',
     path: LoginComponent.Path,
     component: LoginComponent,
   },
@@ -35,6 +41,10 @@ export const routes: Routes = [
       {
         path: ProductsListComponent.Path,
         component: ProductsListComponent,
+      },
+      {
+        path: `${SignUpComponent.Path}/:role`,
+        component: SignUpComponent,
       },
       {
         path: AddnewcategoryComponent.Path,
@@ -83,4 +93,8 @@ export const routes: Routes = [
       },
     ],
   },
+  // {
+  //   path: '**',
+  //   redirectTo: '',
+  // },
 ];

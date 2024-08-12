@@ -6,7 +6,6 @@ import { LoadingComponent } from '../loading/loading.component';
 import { LoginComponent } from '../login/login.component';
 import { ModalComponent } from '../modal/modal.component';
 import { SideBarComponent } from '../modal/side-bar/side-bar.component';
-import { AuthenticationService } from '../../Services/authentication.service';
 import { ModalNavigateService } from '../../Services/modal-navigate.service';
 
 @Component({
@@ -27,11 +26,8 @@ import { ModalNavigateService } from '../../Services/modal-navigate.service';
 export class MainPageComponent {
   static Path = '';
 
-  constructor(
-    private modal: ModalNavigateService,
-    private auth: AuthenticationService
-  ) {}
+  constructor(private modal: ModalNavigateService) {}
   showSideBar() {
-    this.modal.goToModal([SideBarComponent.Path]);
+    this.modal.goToModal(SideBarComponent.Path);
   }
 }

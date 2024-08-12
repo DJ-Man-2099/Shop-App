@@ -22,6 +22,8 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideClientHydration(),
+    provideHttpClient(withInterceptorsFromDi(), withFetch()),
+    importProvidersFrom(FormsModule, ReactiveFormsModule), // Use importProvidersFrom to include FormsModule and ReactiveFormsModule
     { provide: HTTP_INTERCEPTORS, useClass: HttpBaseAdderService, multi: true },
     {
       provide: HTTP_INTERCEPTORS,
@@ -33,7 +35,5 @@ export const appConfig: ApplicationConfig = {
       useClass: RedirectToLoginService,
       multi: true,
     },
-    provideHttpClient(withInterceptorsFromDi(), withFetch()),
-    importProvidersFrom(FormsModule, ReactiveFormsModule), // Use importProvidersFrom to include FormsModule and ReactiveFormsModule
   ],
 };
