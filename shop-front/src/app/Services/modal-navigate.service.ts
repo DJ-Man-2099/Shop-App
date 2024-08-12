@@ -15,12 +15,12 @@ export class ModalNavigateService {
         state: { data },
       };
     }
-    this.router.navigate([{ outlets: { modal: path, primary: null } }], extras);
+    this.router.navigate([{ outlets: { modal: path } }], extras);
     this.toggle.emit(true);
   }
 
   dismiss() {
-    this.router.navigate([{ outlets: { modal: null, primary: null } }]);
+    this.router.navigate([{ outlets: { modal: null } }]);
     this.toggle.emit(false);
   }
 }

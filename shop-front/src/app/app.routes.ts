@@ -16,10 +16,11 @@ import { EditProductComponent } from './components/modal/edit-product/edit-produ
 import { SignUpComponent } from './components/sign-up/sign-up.component';
 import { isPlatformBrowser } from '@angular/common';
 import { inject, PLATFORM_ID } from '@angular/core';
+import { AuthGuard } from './Guards/auth.guard';
 
-// function isBrowser(): boolean {
-//   return isPlatformBrowser(inject(PLATFORM_ID));
-// }
+function isAuthenticated(): boolean {
+  return isPlatformBrowser(inject(PLATFORM_ID));
+}
 
 export const routes: Routes = [
   {
@@ -29,6 +30,7 @@ export const routes: Routes = [
   {
     path: MainPageComponent.Path,
     component: MainPageComponent,
+    canActivate: [AuthGuard], // Apply the AuthGuard to the main page route
     children: [
       {
         path: CategoriesListComponent.Path,

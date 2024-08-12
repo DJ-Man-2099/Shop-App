@@ -40,6 +40,27 @@ async void AddRoles(IApplicationBuilder app)
     }
 }
 
+async void AddAdmin(IApplicationBuilder app)
+{
+    using var scope = app.ApplicationServices.CreateScope();
+    var manager = scope.ServiceProvider.GetRequiredService<SignInManager<User>>();
+
+    var admin = new User
+    {
+        UserName = "Admin"
+    };
+    var existingAdmin = await manager.UserManager.FindByNameAsync("Admin");
+    if (existingAdmin == null)
+    {
+        var result = await manager.UserManager.CreateAsync(admin, "P@ssw0rd");
+        if (result.Succeeded)
+        {
+            await manager.UserManager.AddToRoleAsync(admin, Roles.Admin);
+        }
+    }
+
+}
+
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -127,6 +148,9 @@ var app = builder.Build();
 ApplyMigrations(app);
 // Add Roles
 AddRoles(app);
+// Add Default Admin User
+AddAdmin(app);
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -135,6 +159,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseFileServer();
+
+app.UseRouting();
+
 
 var summaries = new[]
 {

@@ -29,7 +29,7 @@ import { LoadingComponent } from './components/loading/loading.component';
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
   title = 'shop-front';
   isLoading = true;
 
@@ -37,15 +37,8 @@ export class AppComponent implements OnInit {
     private modal: ModalNavigateService,
     private auth: AuthenticationService
   ) {}
-  ngOnInit(): void {
-    this.isLoading = false;
-  }
 
   showSideBar() {
     this.modal.goToModal([SideBarComponent.Path]);
-  }
-
-  isAuth() {
-    return this.auth.isAuthenticated();
   }
 }
