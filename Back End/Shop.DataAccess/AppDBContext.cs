@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
 using Shop.Models.DB;
 
@@ -9,36 +10,34 @@ namespace Shop.DataAccess;
 public class AppDBContext : IdentityDbContext<User, IdentityRole<int>, int>
 {
 
-	protected readonly IConfiguration? Configuration;
+    public AppDBContext(DbContextOptions<AppDBContext> options) : base(options)
+    {
+    }
 
-	public AppDBContext(
-		IConfiguration? configuration = null,
-		DbContextOptions<AppDBContext>? options = null) : base(options ?? new DbContextOptions<AppDBContext>())
-	{
-		// throw new Exception($"Config is null? {configuration!.GetConnectionString("SqliteDatabase")}");
-		if (configuration != null)
-		{ Configuration = configuration; }
-		else if (options == null)
-		{
-			var builder = new ConfigurationBuilder()
-			.SetBasePath(AppContext.BaseDirectory)
-			.AddJsonFile("dbsettings.json");
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+            // Only configure if options were not already passed via DI
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(AppContext.BaseDirectory)
+                .AddJsonFile("dbsettings.json");
+            var configuration = builder.Build();
 
-			Configuration = builder.Build();
-		}
-	}
+            var dbType = configuration?.GetConnectionString("DefaultDatabase");
+            // throw new Exception($"Config is null? {configuration?.GetConnectionString(dbType!)}");
+            optionsBuilder.UseSqlite(configuration?.GetConnectionString(dbType!),
+            b =>
+            {
+                b.MigrationsAssembly("Shop.DataAccess");
+                b.MigrationsHistoryTable(tableName: HistoryRepository.DefaultTableName);
+            });
+        }
+        base.OnConfiguring(optionsBuilder);
+    }
 
-	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-	{
-		var dbType = Configuration?.GetConnectionString("DefaultDatabase");
-		optionsBuilder.UseSqlite(Configuration?.GetConnectionString(dbType!),
-		b => b.MigrationsAssembly("Shop.DataAccess"));
-
-		base.OnConfiguring(optionsBuilder);
-	}
-
-	public DbSet<Category> Categories { get; set; }
-	public DbSet<Group> Groups { get; set; }
-	public DbSet<Product> Products { get; set; }
+    public DbSet<Category> Categories { get; set; }
+    public DbSet<Group> Groups { get; set; }
+    public DbSet<Product> Products { get; set; }
 
 }

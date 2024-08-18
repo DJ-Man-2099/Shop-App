@@ -14,8 +14,9 @@ public class BaseUnitTest
 		var builder = new DbContextOptionsBuilder<AppDBContext>();
 		var config = TestConfiguration.GetConfiguration();
 		var connection = new SqliteConnection(config.GetConnectionString("UnitDatabase"));
+		// throw new Exception($"Connection string: {connection.ConnectionString}");
 		_dbContextOptions = builder.UseSqlite(connection).Options;
-		_context = new(options: _dbContextOptions);
+		_context = new(_dbContextOptions);
 		_context.Database.EnsureDeleted();
 		_context.Database.Migrate(); // Apply migrations
 	}

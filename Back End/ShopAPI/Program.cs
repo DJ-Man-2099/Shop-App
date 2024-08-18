@@ -1,27 +1,41 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-
+using Microsoft.IdentityModel.Tokens;
 using Shop.Authentication;
 using Shop.Authentication.Interfaces;
 using Shop.Authentication.Services;
 using Shop.DataAccess;
 using Shop.DataAccess.Interfaces;
 using Shop.DataAccess.Services;
+using Shop.Models.Contracts;
 using Shop.Models.DB;
-using System.Text;
-using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using Shop.Models.Contracts;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 void ApplyMigrations(IApplicationBuilder app)
 {
+
     using var scope = app.ApplicationServices.CreateScope();
-    var context = scope.ServiceProvider.GetRequiredService<AppDBContext>();
-    context.Database.Migrate();
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+    try
+    {
+        // var context = scope.ServiceProvider.GetRequiredService<AppDBContext>();
+        // context.Database.Migrate();
+        var tokenContext = scope.ServiceProvider.GetRequiredService<TokenBlacklistDBContext>();
+        logger.LogInformation(tokenContext.Database.GetDbConnection().ConnectionString);
+        tokenContext.Database.Migrate();
+        var tokenDbConnectionString = tokenContext.Database.GetDbConnection().ConnectionString;
+        logger.LogInformation($"TokenBlacklistDBContext migration applied successfully. Database path: {tokenDbConnectionString}");
+
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "An error occurred while applying migrations.");
+    }
 }
 
 async void AddRoles(IApplicationBuilder app)
@@ -47,6 +61,8 @@ async void AddAdmin(IApplicationBuilder app)
 
     var admin = new User
     {
+        FirstName = "David",
+        LastName = "John",
         UserName = "Admin"
     };
     var existingAdmin = await manager.UserManager.FindByNameAsync("Admin");
@@ -60,7 +76,12 @@ async void AddAdmin(IApplicationBuilder app)
     }
 
 }
-
+builder.Services.AddLogging(config =>
+{
+    config.AddConsole();
+    config.AddDebug();
+    // Add other logging providers as needed
+});
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -121,8 +142,7 @@ builder.Services
 builder.Services.AddAuthorization();// Add authorization services
 
 builder.Services.AddDbContext<AppDBContext>();
-builder.Services.AddDbContext<TokenBlacklistDBContext>(options =>
-    options.UseSqlite("Data Source=../Shop.Authentication/token.db", b => b.MigrationsAssembly("ShopAPI")));
+builder.Services.AddDbContext<TokenBlacklistDBContext>();
 
 builder.Services.AddScoped<ICategoriesService, CategoriesService>();
 builder.Services.AddScoped<IGroupsService, GroupsService>();

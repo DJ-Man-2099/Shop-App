@@ -1,0 +1,6 @@
+{
+	"ConnectionStrings": {
+		"SqliteTokenDatabase": "Data Source=token.db",
+		"DefaultTokenDatabase": "SqliteTokenDatabase"
+	}
+}

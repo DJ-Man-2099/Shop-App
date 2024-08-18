@@ -11,8 +11,7 @@ public class CategoriesControllerIntegrationTest : BaseIntegrationTest
 {
 	public CategoriesControllerIntegrationTest(BaseWebAppFactory factory) : base(factory)
 	{
-		ResetDatabase();
-		_client.DefaultRequestHeaders.Add("Authorization", "Bearer Testing");
+		_client.DefaultRequestHeaders.Add("Authorization", $"Bearer {AdminToken}");
 	}
 
 	// Get Testing
