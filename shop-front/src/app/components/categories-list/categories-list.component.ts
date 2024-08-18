@@ -4,6 +4,7 @@ import { CategoryService } from '../../Services/category.service';
 import { AddnewcategoryComponent } from '../modal/addnewcategory/addnewcategory.component';
 import { ModalNavigateService } from '../../Services/modal-navigate.service';
 import { EditCategoryComponent } from '../modal/edit-category/edit-category.component';
+import { AuthenticationService } from '../../Services/authentication.service';
 
 @Component({
   selector: 'app-categories-list',
@@ -16,16 +17,23 @@ export class CategoriesListComponent implements OnInit {
   static Path = 'categories-list';
 
   categories: Category[] = [];
+  isEdible = false;
 
   constructor(
     private categoryService: CategoryService,
     private cdr: ChangeDetectorRef,
-    private modal: ModalNavigateService
-  ) {}
+    private modal: ModalNavigateService,
+    private authService: AuthenticationService
+  ) {
+    this.isEdible = this.authService.user?.role === 'Admin';
+  }
 
   ngOnInit() {
     this.getAllCategories();
     this.categoryService.changeCateogryPrices.subscribe(() => {
+      this.getAllCategories();
+    });
+    this.categoryService.changeBaseCategoryEvent.subscribe(() => {
       this.getAllCategories();
     });
   }
@@ -44,7 +52,7 @@ export class CategoriesListComponent implements OnInit {
             Name: c.name,
             Standard: c.standard,
             Price: c.price,
-            IsPrimary: c.isPrimary,
+            Type: c.type,
           };
         }) ?? [];
 

@@ -5,6 +5,7 @@ import { ModalNavigateService } from '../../Services/modal-navigate.service';
 import { AddNewProductComponent } from '../modal/add-new-product/add-new-product.component';
 import { ShowProductInfoComponent } from '../modal/show-product-info/show-product-info.component';
 import { EditProductComponent } from '../modal/edit-product/edit-product.component';
+import { AuthenticationService } from '../../Services/authentication.service';
 
 @Component({
   selector: 'app-products-list',
@@ -17,12 +18,16 @@ export class ProductsListComponent implements OnInit {
   static Path = 'products-list';
 
   products: ProductOutput[] = [];
+  isEdible = false;
 
   constructor(
     private productService: ProductService,
     private cdr: ChangeDetectorRef,
-    private modal: ModalNavigateService
-  ) {}
+    private modal: ModalNavigateService,
+    private authService: AuthenticationService
+  ) {
+    this.isEdible = this.authService.user?.role === 'Admin';
+  }
 
   ngOnInit() {
     this.getAllCategories();

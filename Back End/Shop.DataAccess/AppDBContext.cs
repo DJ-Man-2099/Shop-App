@@ -22,7 +22,7 @@ public class AppDBContext : IdentityDbContext<User, IdentityRole<int>, int>
 		{
 			var builder = new ConfigurationBuilder()
 			.SetBasePath(AppContext.BaseDirectory)
-			.AddJsonFile("appsettings.json");
+			.AddJsonFile("dbsettings.json");
 
 			Configuration = builder.Build();
 		}

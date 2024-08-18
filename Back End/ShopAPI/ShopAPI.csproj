@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.7" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.0" />
+    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="5.5.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,5 +21,6 @@
   <ItemGroup>
      <InternalsVisibleTo Include="Shop.Testing" />
   </ItemGroup>
+  
 
 </Project>

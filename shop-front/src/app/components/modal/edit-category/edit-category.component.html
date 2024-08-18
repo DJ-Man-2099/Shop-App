@@ -2,8 +2,9 @@
 	@if(isLoaded){
 
 	<div class="card-header d-flex justify-content-between align-items-center">
-		تعديل {{editCategory.Name}}{{editCategory.IsPrimary?" (العيار الأساسي)":""}}
-		<button class="btn btn-success" (click)="onChangeBase()">تحديد كعيار رئيسي</button>
+		تعديل {{editCategory.Name}}{{editCategory.Type==="Primary"?" (العيار الأساسي)":""}}
+		@if(editCategory.Type!="Primary"){<button class="btn btn-success" (click)="onChangeBase()">تحديد كعيار
+			رئيسي</button>}
 	</div>
 	<div class="card-body">
 		<form class="d-flex flex-column gap-2" [formGroup]="editCategoryForm" (ngSubmit)="onSubmit()">
@@ -16,7 +17,8 @@
 			}
 			<div class="d-flex justify-content-between align-items-center">
 				<button class="btn btn-primary" type="submit" [disabled]="editCategoryForm.invalid">تعديل</button>
-				@if(!editCategory.IsPrimary){<button class="btn btn-danger" type="button" (click)="onDelete()">الغاء
+				@if(editCategory.Type!="Primary"){<button class="btn btn-danger" type="button"
+					(click)="onDelete()">الغاء
 					العيار</button>}
 				<button class="btn btn-warning" type="button" (click)="onDismiss()">اغلاق</button>
 			</div>

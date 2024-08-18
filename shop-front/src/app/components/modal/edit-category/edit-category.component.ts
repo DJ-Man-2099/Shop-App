@@ -8,7 +8,7 @@ import {
   EnhancedFormBuilderService,
 } from '../../../Services/enhanced-form-builder.service';
 import { ModalNavigateService } from '../../../Services/modal-navigate.service';
-import { Category } from '../../../interfaces/category';
+import { Category, returnedCategory } from '../../../interfaces/category';
 import { LoadingComponent } from '../../loading/loading.component';
 
 @Component({
@@ -45,6 +45,8 @@ export class EditCategoryComponent {
     };
 
     this.editCategory = category;
+    console.log(category);
+
     this.isLoaded = true;
 
     const formConfig: any = {
@@ -61,7 +63,7 @@ export class EditCategoryComponent {
     };
 
     // Conditionally add the Price field if the category is Primary
-    if (category.IsPrimary) {
+    if (category.Type === 'Primary') {
       formConfig.Price = {
         type: 'number',
         displayName: 'السعر',

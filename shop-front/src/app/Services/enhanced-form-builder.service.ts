@@ -1,17 +1,22 @@
 import { Injectable } from '@angular/core';
-import { FormBuilder, FormGroup, ValidatorFn } from '@angular/forms';
+import {
+  AbstractControlOptions,
+  FormBuilder,
+  FormGroup,
+  ValidatorFn,
+} from '@angular/forms';
 
 type enhancedFormControlDef = {
   [name: string]: {
     type: string;
     displayName: string;
     options?: { value: any; label: string }[];
-    controls: [any, ValidatorFn | ValidatorFn[] | null | undefined];
+    controls: [any, (ValidatorFn | ValidatorFn[] | null | undefined)?];
   };
 };
 
 type formControlDef = {
-  [name: string]: [any, ValidatorFn | ValidatorFn[] | null | undefined];
+  [name: string]: [any, (ValidatorFn | ValidatorFn[] | null | undefined)?];
 };
 
 export type FormKeys = {
@@ -29,7 +34,10 @@ export class EnhancedFormBuilderService {
   origControls!: enhancedFormControlDef;
   constructor(private fb: FormBuilder) {}
 
-  createForm(formControls: enhancedFormControlDef) {
+  createForm(
+    formControls: enhancedFormControlDef,
+    options?: AbstractControlOptions | null
+  ) {
     this.origControls = formControls;
     const tempControls = Object.keys(formControls).reduce<formControlDef>(
       (acc, key) => {
@@ -39,7 +47,7 @@ export class EnhancedFormBuilderService {
       },
       {}
     );
-    this.resultForm = this.fb.group(tempControls);
+    this.resultForm = this.fb.group(tempControls, options);
   }
 
   getFormControlNames() {

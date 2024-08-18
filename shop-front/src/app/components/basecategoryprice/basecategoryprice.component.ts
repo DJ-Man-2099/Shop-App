@@ -13,6 +13,7 @@ import {
   FormKeys,
 } from '../../Services/enhanced-form-builder.service';
 import { LoadingComponent } from '../loading/loading.component';
+import { AuthenticationService } from '../../Services/authentication.service';
 
 @Component({
   selector: 'app-basecategoryprice',
@@ -25,14 +26,18 @@ export class BasecategorypriceComponent implements OnInit {
   baseCategory!: returnedCategory;
   baseCategoryPrice!: number;
   isLoading = true;
+  isEdible = true;
 
   newBaseCategoryForm!: FormGroup;
   newBaseCategoryFormControlNames!: FormKeys[];
 
   constructor(
     private categoryService: CategoryService,
-    private efb: EnhancedFormBuilderService
-  ) {}
+    private efb: EnhancedFormBuilderService,
+    private authService: AuthenticationService
+  ) {
+    this.isEdible = this.authService.user?.role === 'Admin';
+  }
 
   async ngOnInit(): Promise<void> {
     this.efb.createForm({

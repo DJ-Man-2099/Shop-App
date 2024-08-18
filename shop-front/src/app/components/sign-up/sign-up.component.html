@@ -1,1 +1,34 @@
-<p>sign-up works!</p>
+<div class="card">
+	<div class="card-header">تسجيل مستخدم جديد</div>
+	<div class="card-body">
+		<form class="d-flex flex-column gap-2" [formGroup]="NewUserForm" (ngSubmit)="onSubmit()">
+			@for(control of NewUserFormControlNames; track control.key){
+			<div class="d-flex align-items-center">
+				<label class="col-4" for="{{control.key}}"> {{control.displayName}} </label>
+				@if(control.type === 'select'){
+				<select class="form-control" id="{{control.key}}" formControlName="{{control.key}}">
+					<option value="" disabled selected>يرجى اختيار الوظيفة</option>
+					@for(option of control.options!; track option.value){
+					<option [value]="option.value">{{option.label}}</option>
+					}
+				</select>
+				}@else{
+				<input class="form-control" type="{{control.type}}" id="{{control.key}}"
+					formControlName="{{control.key}}" />
+				}
+			</div>
+			@if(control.key === 'password'){
+			<app-password-strength-meter [max]="5" [current]="PasswordStrengthMeter"
+				[error]="PasswordStrengthMeterError" />
+			} @else if(control.key === 'confirmPassword' && ConfirmPasswordError != ""){
+			<div class="alert alert-danger" role="alert">
+				{{ConfirmPasswordError}}
+			</div>
+			}
+			}
+			<div class="d-flex justify-content-between align-items-center">
+				<button class="btn btn-primary" type="submit" [disabled]="NewUserForm.invalid">تسجيل</button>
+			</div>
+		</form>
+	</div>
+</div>

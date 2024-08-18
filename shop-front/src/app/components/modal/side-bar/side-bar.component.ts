@@ -9,6 +9,7 @@ import { ProductsListComponent } from '../../products-list/products-list.compone
 import { SignUpComponent } from '../../sign-up/sign-up.component';
 import { MainPageComponent } from '../../main-page/main-page.component';
 import { LoginComponent } from '../../login/login.component';
+import { MessageModalService } from '../../../Services/message-modal.service';
 
 @Component({
   selector: 'app-side-bar',
@@ -25,17 +26,22 @@ export class SideBarComponent {
     { name: 'العيارات', path: CategoriesListComponent.Path },
     { name: 'المجموعات', path: GroupsListComponent.Path },
     { name: 'المنتجات', path: ProductsListComponent.Path },
-    { name: 'تسجيل المدراء', path: [SignUpComponent.Path, 'admin'] },
-    { name: 'تسجيل العاملين', path: [SignUpComponent.Path, 'worker'] },
   ];
 
   constructor(
     private modal: ModalNavigateService,
+    private messageModal: MessageModalService,
     private router: Router,
     private authService: AuthenticationService
   ) {
     this.name = this.authService.user?.name ?? '';
     this.role = this.authService.user?.role ?? '';
+    if (this.role === 'Admin') {
+      this.links.push({
+        name: 'تسجيل مستخدم جديد',
+        path: SignUpComponent.Path,
+      });
+    }
   }
 
   dismiss() {
@@ -45,12 +51,18 @@ export class SideBarComponent {
   name!: string;
   role!: string;
 
-  logout() {
+  async logout() {
     this.dismiss();
-    this.authService.clearToken();
-    this.router.navigate([
-      { outlets: { primary: [LoginComponent.Path], modal: null } },
-    ]);
+    const res = await this.messageModal.showSuccessMessage(
+      'تم تسجيل الخروج بنجاح',
+      'تسجيل الخروج'
+    );
+    console.log(`message from modal: ${res}`);
+
+    // await this.authService.clearToken();
+    // this.router.navigate([
+    //   { outlets: { primary: [LoginComponent.Path], modal: null } },
+    // ]);
   }
 
   goto(path: string | string[]) {

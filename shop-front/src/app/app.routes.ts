@@ -17,6 +17,7 @@ import { SignUpComponent } from './components/sign-up/sign-up.component';
 import { isPlatformBrowser } from '@angular/common';
 import { inject, PLATFORM_ID } from '@angular/core';
 import { AuthGuard } from './Guards/auth.guard';
+import { adminGuard } from './Guards/admin.guard';
 
 function isAuthenticated(): boolean {
   return isPlatformBrowser(inject(PLATFORM_ID));
@@ -45,18 +46,21 @@ export const routes: Routes = [
         component: ProductsListComponent,
       },
       {
-        path: `${SignUpComponent.Path}/:role`,
+        path: SignUpComponent.Path,
         component: SignUpComponent,
+        canActivate: [adminGuard],
       },
       {
         path: AddnewcategoryComponent.Path,
         component: AddnewcategoryComponent,
         outlet: 'modal',
+        canActivate: [adminGuard],
       },
       {
         path: `${EditCategoryComponent.Path}/:id`,
         component: EditCategoryComponent,
         outlet: 'modal',
+        canActivate: [adminGuard],
       },
       {
         path: MessageComponent.Path,
@@ -67,16 +71,19 @@ export const routes: Routes = [
         path: AddNewGroupComponent.Path,
         component: AddNewGroupComponent,
         outlet: 'modal',
+        canActivate: [adminGuard],
       },
       {
         path: `${EditGroupComponent.Path}/:id`,
         component: EditGroupComponent,
         outlet: 'modal',
+        canActivate: [adminGuard],
       },
       {
         path: AddNewProductComponent.Path,
         component: AddNewProductComponent,
         outlet: 'modal',
+        canActivate: [adminGuard],
       },
       {
         path: `${ShowProductInfoComponent.Path}/:id`,
@@ -87,6 +94,7 @@ export const routes: Routes = [
         path: `${EditProductComponent.Path}/:id`,
         component: EditProductComponent,
         outlet: 'modal',
+        canActivate: [adminGuard],
       },
       {
         path: SideBarComponent.Path,

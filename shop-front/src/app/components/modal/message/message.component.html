@@ -1,10 +1,10 @@
-<div class="card">
+<div class="card {{cardClasses[type]}}">
 	@if(isLoaded){
 	<div class="card-header">{{title}}</div>
 	<div class="card-body">{{message}}</div>
-	<div class="card-footer d-flex align-items-center justify-content-between">
-		<button class="btn {{messageType}}" (click)="onAccept()">تأكيد</button>
-		<button class="btn btn-warning">الغاء</button>
+	<div class="card-footer d-flex align-items-center justify-content-end">
+		<button class="btn {{buttonClasses[type]}}" (click)="onAccept()">تأكيد</button>
+		@if(isDialog){<button class="btn btn-warning" (click)="onDismiss()">الغاء</button>}
 	</div>
 	}@else{
 	<app-loading />

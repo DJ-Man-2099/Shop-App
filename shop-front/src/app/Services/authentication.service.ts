@@ -13,13 +13,14 @@ import {
   InnerUser,
 } from '../interfaces/user';
 import { isPlatformBrowser } from '@angular/common';
+import { SimpleHttpClientService } from './simple-http-client.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthenticationService {
   constructor(
-    private http: HttpClient,
+    private http: SimpleHttpClientService,
     @Inject(PLATFORM_ID) private platformId: InjectionToken<object>
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
@@ -57,7 +58,8 @@ export class AuthenticationService {
     this._user = value;
   }
 
-  clearToken() {
+  async clearToken() {
+    await this.logout();
     this._token = null;
     this._user = null;
     if (this.isBrowser) {
@@ -66,43 +68,16 @@ export class AuthenticationService {
       localStorage.removeItem('role');
     }
   }
+  logout() {
+    return firstValueFrom(this.http.post('api/User/logout', null));
+  }
 
   signUpAsAdmin(user: UserSignup) {
-    return firstValueFrom(
-      this.http
-        .post('api/User/admin', user, {
-          observe: 'response',
-        })
-        .pipe(
-          catchError((err: HttpErrorResponse) =>
-            of(
-              new HttpResponse({
-                ...err,
-                url: err.url!,
-              })
-            )
-          )
-        )
-    );
+    return firstValueFrom(this.http.post('api/User/admin', user));
   }
 
   signUpAsWorker(user: UserSignup) {
-    return firstValueFrom(
-      this.http
-        .post('api/User', user, {
-          observe: 'response',
-        })
-        .pipe(
-          catchError((err: HttpErrorResponse) =>
-            of(
-              new HttpResponse({
-                ...err,
-                url: err.url!,
-              })
-            )
-          )
-        )
-    );
+    return firstValueFrom(this.http.post('api/User', user));
   }
 
   isAuthenticated(): boolean {
@@ -111,25 +86,13 @@ export class AuthenticationService {
 
   login(user: UserLogin) {
     return firstValueFrom(
-      this.http
-        .post('api/User/login', user, {
-          observe: 'response',
+      this.http.post('api/User/login', user).pipe(
+        map((res: HttpResponse<any>) => {
+          const body: UserOutput = res.body;
+          this.updateLocalStorage(body);
+          return res;
         })
-        .pipe(
-          catchError((err: HttpErrorResponse) =>
-            of(
-              new HttpResponse({
-                ...err,
-                url: err.url!,
-              })
-            )
-          ),
-          map((res: HttpResponse<any>) => {
-            const body: UserOutput = res.body;
-            this.updateLocalStorage(body);
-            return res;
-          })
-        )
+      )
     );
   }
   updateLocalStorage(body: UserOutput) {

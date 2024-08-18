@@ -4,6 +4,7 @@ import { GroupService } from '../../Services/group.service';
 import { ModalNavigateService } from '../../Services/modal-navigate.service';
 import { AddNewGroupComponent } from '../modal/add-new-group/add-new-group.component';
 import { EditGroupComponent } from '../modal/edit-group/edit-group.component';
+import { AuthenticationService } from '../../Services/authentication.service';
 
 @Component({
   selector: 'app-groups-list',
@@ -16,12 +17,16 @@ export class GroupsListComponent implements OnInit {
   static Path = 'groups-list';
 
   groups: GroupOutput[] = [];
+  isEdible = false;
 
   constructor(
     private groupService: GroupService,
     private cdr: ChangeDetectorRef,
-    private modal: ModalNavigateService
-  ) {}
+    private modal: ModalNavigateService,
+    private authService: AuthenticationService
+  ) {
+    this.isEdible = this.authService.user?.role === 'Admin';
+  }
 
   ngOnInit() {
     this.getAllGroups();

@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 
 import { ModalNavigateService } from '../../../Services/modal-navigate.service';
-import { Message } from '../../../interfaces/message';
+import { Message, MessageType } from '../../../interfaces/message';
 import { LoadingComponent } from '../../loading/loading.component';
+import { MessageModalService } from '../../../Services/message-modal.service';
 
 @Component({
   selector: 'app-message',
@@ -12,20 +13,31 @@ import { LoadingComponent } from '../../loading/loading.component';
   templateUrl: './message.component.html',
   styleUrl: './message.component.css',
 })
-export class MessageComponent implements OnInit {
+export class MessageComponent implements OnInit, OnDestroy {
   static Path = 'message';
 
-  type?: string;
+  type!: MessageType;
   title!: string;
-  messageType = 'btn-primary';
-  message!: Message;
-  onAccept!: () => void;
+  message!: string;
   isLoaded = false;
+  isDialog!: boolean;
+
+  cardClasses = {
+    [MessageType.Success.toString()]: 'bg-success-subtle',
+  };
+
+  buttonClasses = {
+    [MessageType.Success.toString()]: 'btn-success',
+  };
 
   constructor(
     private currentLocation: Location,
-    private modal: ModalNavigateService
+    private modal: ModalNavigateService,
+    private messageModal: MessageModalService
   ) {}
+  ngOnDestroy(): void {
+    this.messageModal.messageEvent.emit(false);
+  }
 
   ngOnInit() {
     if (!this.currentLocation.getState()) {
@@ -33,30 +45,25 @@ export class MessageComponent implements OnInit {
       return;
     }
     const {
-      data: { type, message, onAccept, title },
+      data: { Message, Type, Title },
     } = this.currentLocation.getState() as {
-      data: {
-        type?: string;
-        title: string;
-        message: Message;
-        onAccept: () => void;
-      };
+      data: Message;
     };
 
-    if (type) {
-      this.type = type;
-    }
-    this.title = title;
-    this.message = message;
-    this.onAccept = onAccept;
+    this.type = Type;
+    this.title = Title;
+    this.message = Message;
     this.isLoaded = true;
+    this.isDialog = this.type === MessageType.Dialog;
+  }
 
-    if (this.type === 'warning') {
-      this.messageType = 'btn-danger';
-    }
+  onAccept() {
+    this.messageModal.messageEvent.emit(true);
+    this.modal.dismiss();
   }
 
   onDismiss() {
+    this.messageModal.messageEvent.emit(false);
     this.modal.dismiss();
   }
 }

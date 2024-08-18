@@ -3,3 +3,6 @@ Back End/**/bin
 **/.vscode
 shop-front/backend.bat
 Shop App.code-workspace
+**/.vs
+**/.config
+Back End/ShopAPI/Properties/PublishProfiles/

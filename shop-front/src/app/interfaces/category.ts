@@ -3,7 +3,7 @@ export interface Category {
   Name: string;
   Standard: number;
   Price: number;
-  IsPrimary: boolean;
+  Type: string;
 }
 
 export interface returnedCategory {
@@ -11,5 +11,5 @@ export interface returnedCategory {
   name: string;
   standard: number;
   price: number;
-  isPrimary: boolean;
+  type: string;
 }

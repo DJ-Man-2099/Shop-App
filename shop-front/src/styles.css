@@ -40,3 +40,7 @@ app-root {
 i.bi {
 	font-size: 40px !important;
 }
+
+.alert {
+	font-size: 22px !important;
+}

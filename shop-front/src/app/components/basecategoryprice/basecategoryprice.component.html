@@ -6,15 +6,17 @@
 	@if(baseCategory != null){
 	<div class="d-flex align-items-center gap-3">
 		<span [style.width]="'fit-content'"> سعر عيار {{baseCategory.standard}} الحالي: </span>
-		<input aria-label="base Price input" [(ngModel)]="baseCategoryPrice" type="number" class="form-control"
-			[style.flex]="1" />
+		<input [readonly]="!isEdible" aria-label="base Price input" [(ngModel)]="baseCategoryPrice" type="number"
+			class="form-control" [style.flex]="1" />
 	</div>
+	@if(isEdible){
 	<div class="d-flex align-items-center justify-content-between">
 		<button class="col-4 btn btn-primary" (click)="changeBaseCategoryPrice()">حفظ</button>
 		<button class="col-4 btn btn-danger" (click)="resetBaseCategoryPrice()">إلغاء</button>
-	</div>
+	</div>}
 	} @else {
 	<div class="alert alert-danger">بالرجاء إدخال العيار الاساسي</div>
+	@if(isEdible){
 	<form class="d-flex flex-column gap-2" [formGroup]="newBaseCategoryForm" (ngSubmit)="onSubmit()">
 		@for(control of newBaseCategoryFormControlNames; track control.key){
 		<div class="d-flex align-items-center">
@@ -25,6 +27,7 @@
 		}
 		<button class="btn btn-primary" type="submit" [disabled]="newBaseCategoryForm.invalid">إدخال</button>
 	</form>
+	}
 	}
 
 	}
