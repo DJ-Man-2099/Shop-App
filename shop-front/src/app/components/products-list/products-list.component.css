@@ -1,0 +1,3 @@
+.card {
+	max-height: calc(80vh - 3rem - 70px);
+}

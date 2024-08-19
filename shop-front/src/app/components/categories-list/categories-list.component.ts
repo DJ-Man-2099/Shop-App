@@ -45,7 +45,7 @@ export class CategoriesListComponent implements OnInit {
   async getAllCategories() {
     const response = await this.categoryService.getAllCategories();
     if (response.ok) {
-      this.categories =
+      const categories =
         response.body?.map<Category>((c) => {
           return {
             Id: c.id,
@@ -57,6 +57,13 @@ export class CategoriesListComponent implements OnInit {
         }) ?? [];
 
       // Repeat the list 10 times
+      this.categories = categories;
+      // .reduce((acc, cur) => {
+      //   for (let i = 0; i < 10; i++) {
+      //     acc.push(cur);
+      //   }
+      //   return acc;
+      // }, [] as Category[])
       this.cdr.detectChanges();
     }
   }

@@ -6,6 +6,7 @@ import {
 } from '../../../Services/enhanced-form-builder.service';
 import { ModalNavigateService } from '../../../Services/modal-navigate.service';
 import { CategoryService } from '../../../Services/category.service';
+import { MessageModalService } from '../../../Services/message-modal.service';
 
 @Component({
   selector: 'app-addnewcategory',
@@ -23,7 +24,8 @@ export class AddnewcategoryComponent implements OnInit {
   constructor(
     private efb: EnhancedFormBuilderService,
     private modal: ModalNavigateService,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    private messageService: MessageModalService
   ) {}
 
   ngOnInit() {
@@ -51,6 +53,8 @@ export class AddnewcategoryComponent implements OnInit {
     if (response.ok) {
       this.categoryService.changeCateogryPrices.emit();
       this.onDismiss();
+    } else {
+      await this.messageService.showErrorMessage('العيار مضاف مسبقًا', 'خطأ');
     }
   }
 

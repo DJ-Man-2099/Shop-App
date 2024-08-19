@@ -11,3 +11,8 @@
 .hide {
 	display: none !important;
 }
+
+span {
+	background-color: white;
+	border-radius: var(--bs-border-radius);
+}

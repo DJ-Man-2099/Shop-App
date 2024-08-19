@@ -11,6 +11,7 @@ import { GroupService } from '../../../Services/group.service';
 import { ProductService } from '../../../Services/product.service';
 import { LoadingComponent } from '../../loading/loading.component';
 import { ProductOutput } from '../../../interfaces/product';
+import { MessageModalService } from '../../../Services/message-modal.service';
 
 @Component({
   selector: 'app-edit-product',
@@ -33,7 +34,8 @@ export class EditProductComponent implements OnInit {
     private modal: ModalNavigateService,
     private groupService: GroupService,
     private productService: ProductService,
-    private currentLocation: Location
+    private currentLocation: Location,
+    private messageService: MessageModalService
   ) {}
 
   async ngOnInit() {
@@ -111,8 +113,12 @@ export class EditProductComponent implements OnInit {
     }
   }
 
-  onDelete() {
-    if (confirm('هل انت متأكد من رغبتك في الغاء المنتج؟')) {
+  async onDelete() {
+    var res = await this.messageService.showConfirmMessage(
+      'هل انت متأكد من رغبتك في الغاء المنتج؟',
+      'تأكيد'
+    );
+    if (res) {
       this.onAccept();
     }
   }

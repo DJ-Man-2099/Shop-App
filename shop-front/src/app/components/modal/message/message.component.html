@@ -2,7 +2,7 @@
 	@if(isLoaded){
 	<div class="card-header">{{title}}</div>
 	<div class="card-body">{{message}}</div>
-	<div class="card-footer d-flex align-items-center justify-content-end">
+	<div class="card-footer d-flex align-items-center justify-content-end gap-3">
 		<button class="btn {{buttonClasses[type]}}" (click)="onAccept()">تأكيد</button>
 		@if(isDialog){<button class="btn btn-warning" (click)="onDismiss()">الغاء</button>}
 	</div>

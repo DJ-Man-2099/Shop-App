@@ -88,8 +88,10 @@ export class AuthenticationService {
     return firstValueFrom(
       this.http.post('api/User/login', user).pipe(
         map((res: HttpResponse<any>) => {
-          const body: UserOutput = res.body;
-          this.updateLocalStorage(body);
+          if (res.ok) {
+            const body: UserOutput = res.body;
+            this.updateLocalStorage(body);
+          }
           return res;
         })
       )

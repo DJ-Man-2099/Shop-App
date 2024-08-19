@@ -8,6 +8,7 @@ import { ModalNavigateService } from '../../../Services/modal-navigate.service';
 import { GroupService } from '../../../Services/group.service';
 import { CategoryService } from '../../../Services/category.service';
 import { LoadingComponent } from '../../loading/loading.component';
+import { MessageModalService } from '../../../Services/message-modal.service';
 
 @Component({
   selector: 'app-add-new-group',
@@ -28,7 +29,8 @@ export class AddNewGroupComponent implements OnInit {
     private efb: EnhancedFormBuilderService,
     private modal: ModalNavigateService,
     private groupService: GroupService,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    private messageService: MessageModalService
   ) {}
 
   async ngOnInit() {
@@ -64,6 +66,11 @@ export class AddNewGroupComponent implements OnInit {
     if (res.ok) {
       this.groupService.changeGroups.emit();
       this.modal.dismiss();
+    } else {
+      await this.messageService.showErrorMessage(
+        'المجموعة مضافة مسبقًا',
+        'خطأ'
+      );
     }
   }
 

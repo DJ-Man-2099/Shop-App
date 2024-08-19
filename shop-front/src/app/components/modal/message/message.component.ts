@@ -24,12 +24,16 @@ export class MessageComponent implements OnInit, OnDestroy {
 
   cardClasses = {
     [MessageType.Success.toString()]: 'bg-success-subtle',
+    [MessageType.Error.toString()]: 'bg-danger-subtle',
   };
 
   buttonClasses = {
     [MessageType.Success.toString()]: 'btn-success',
+    [MessageType.Error.toString()]: 'btn-danger',
+    [MessageType.Dialog.toString()]: 'btn-primary',
   };
 
+  //TODO: return to old Modal
   constructor(
     private currentLocation: Location,
     private modal: ModalNavigateService,

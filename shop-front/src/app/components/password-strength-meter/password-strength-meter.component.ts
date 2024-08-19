@@ -24,6 +24,6 @@ export class PasswordStrengthMeterComponent implements OnChanges {
     this.array = Array(this.max)
       .fill(false)
       .map((v, i) => this.current > i);
-    console.log(this.array);
+    // console.log(this.array);
   }
 }

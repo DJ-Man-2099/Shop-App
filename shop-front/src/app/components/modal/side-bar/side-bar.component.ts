@@ -53,16 +53,21 @@ export class SideBarComponent {
 
   async logout() {
     this.dismiss();
-    const res = await this.messageModal.showSuccessMessage(
-      'تم تسجيل الخروج بنجاح',
-      'تسجيل الخروج'
-    );
-    console.log(`message from modal: ${res}`);
-
-    // await this.authService.clearToken();
-    // this.router.navigate([
-    //   { outlets: { primary: [LoginComponent.Path], modal: null } },
-    // ]);
+    try {
+      await this.authService.clearToken();
+      await this.messageModal.showSuccessMessage(
+        'تم تسجيل الخروج بنجاح',
+        'تسجيل الخروج'
+      );
+      this.router.navigate([
+        { outlets: { primary: [LoginComponent.Path], modal: null } },
+      ]);
+    } catch (error) {
+      await this.messageModal.showSuccessMessage(
+        'حدث خطأ أثناء تسجيل الخروج',
+        'تسجيل الخروج'
+      );
+    }
   }
 
   goto(path: string | string[]) {

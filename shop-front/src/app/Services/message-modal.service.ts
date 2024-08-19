@@ -21,4 +21,22 @@ export class MessageModalService {
     this.modalService.goToModal(MessageComponent.Path, messageData);
     return await firstValueFrom(this.messageEvent);
   }
+  async showErrorMessage(Message: string, Title: string): Promise<boolean> {
+    const messageData: Message = {
+      Message,
+      Title,
+      Type: MessageType.Error,
+    };
+    this.modalService.goToModal(MessageComponent.Path, messageData);
+    return await firstValueFrom(this.messageEvent);
+  }
+  async showConfirmMessage(Message: string, Title: string): Promise<boolean> {
+    const messageData: Message = {
+      Message,
+      Title,
+      Type: MessageType.Dialog,
+    };
+    this.modalService.goToModal(MessageComponent.Path, messageData);
+    return await firstValueFrom(this.messageEvent);
+  }
 }

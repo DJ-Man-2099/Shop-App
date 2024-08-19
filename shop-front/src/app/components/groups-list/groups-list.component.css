@@ -3,6 +3,10 @@
 	font-size: 0.9em !important;
 }
 
+.card {
+	max-height: calc(80vh - 3rem - 70px);
+}
+
 .title {
 	height: 3rem;
 }

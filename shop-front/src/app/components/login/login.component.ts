@@ -12,6 +12,7 @@ import {
 import { AuthenticationService } from '../../Services/authentication.service';
 import { Router } from '@angular/router';
 import { MainPageComponent } from '../main-page/main-page.component';
+import { MessageModalService } from '../../Services/message-modal.service';
 
 @Component({
   selector: 'app-login',
@@ -28,7 +29,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private efb: EnhancedFormBuilderService,
     private authService: AuthenticationService,
-    private router: Router
+    private router: Router,
+    private messageService: MessageModalService
   ) {}
 
   ngOnInit() {
@@ -52,6 +54,11 @@ export class LoginComponent implements OnInit {
     var res = await this.authService.login(this.loginForm.value);
     if (res.ok) {
       this.router.navigate([MainPageComponent.Path]);
+    } else {
+      this.messageService.showErrorMessage(
+        'خطأ في اسم المستخدم أو كلمة السر',
+        'خطأ'
+      );
     }
   }
 }

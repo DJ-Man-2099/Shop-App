@@ -25,6 +25,57 @@ function isAuthenticated(): boolean {
 
 export const routes: Routes = [
   {
+    path: AddnewcategoryComponent.Path,
+    component: AddnewcategoryComponent,
+    outlet: 'modal',
+    canActivate: [adminGuard],
+  },
+  {
+    path: `${EditCategoryComponent.Path}/:id`,
+    component: EditCategoryComponent,
+    outlet: 'modal',
+    canActivate: [adminGuard],
+  },
+  {
+    path: MessageComponent.Path,
+    component: MessageComponent,
+    outlet: 'modal',
+  },
+  {
+    path: AddNewGroupComponent.Path,
+    component: AddNewGroupComponent,
+    outlet: 'modal',
+    canActivate: [adminGuard],
+  },
+  {
+    path: `${EditGroupComponent.Path}/:id`,
+    component: EditGroupComponent,
+    outlet: 'modal',
+    canActivate: [adminGuard],
+  },
+  {
+    path: AddNewProductComponent.Path,
+    component: AddNewProductComponent,
+    outlet: 'modal',
+    canActivate: [adminGuard],
+  },
+  {
+    path: `${ShowProductInfoComponent.Path}/:id`,
+    component: ShowProductInfoComponent,
+    outlet: 'modal',
+  },
+  {
+    path: `${EditProductComponent.Path}/:id`,
+    component: EditProductComponent,
+    outlet: 'modal',
+    canActivate: [adminGuard],
+  },
+  {
+    path: SideBarComponent.Path,
+    component: SideBarComponent,
+    outlet: 'modal',
+  },
+  {
     path: LoginComponent.Path,
     component: LoginComponent,
   },
@@ -49,57 +100,6 @@ export const routes: Routes = [
         path: SignUpComponent.Path,
         component: SignUpComponent,
         canActivate: [adminGuard],
-      },
-      {
-        path: AddnewcategoryComponent.Path,
-        component: AddnewcategoryComponent,
-        outlet: 'modal',
-        canActivate: [adminGuard],
-      },
-      {
-        path: `${EditCategoryComponent.Path}/:id`,
-        component: EditCategoryComponent,
-        outlet: 'modal',
-        canActivate: [adminGuard],
-      },
-      {
-        path: MessageComponent.Path,
-        component: MessageComponent,
-        outlet: 'modal',
-      },
-      {
-        path: AddNewGroupComponent.Path,
-        component: AddNewGroupComponent,
-        outlet: 'modal',
-        canActivate: [adminGuard],
-      },
-      {
-        path: `${EditGroupComponent.Path}/:id`,
-        component: EditGroupComponent,
-        outlet: 'modal',
-        canActivate: [adminGuard],
-      },
-      {
-        path: AddNewProductComponent.Path,
-        component: AddNewProductComponent,
-        outlet: 'modal',
-        canActivate: [adminGuard],
-      },
-      {
-        path: `${ShowProductInfoComponent.Path}/:id`,
-        component: ShowProductInfoComponent,
-        outlet: 'modal',
-      },
-      {
-        path: `${EditProductComponent.Path}/:id`,
-        component: EditProductComponent,
-        outlet: 'modal',
-        canActivate: [adminGuard],
-      },
-      {
-        path: SideBarComponent.Path,
-        component: SideBarComponent,
-        outlet: 'modal',
       },
     ],
   },

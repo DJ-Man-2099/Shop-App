@@ -10,6 +10,7 @@ import {
 import { ModalNavigateService } from '../../../Services/modal-navigate.service';
 import { Category, returnedCategory } from '../../../interfaces/category';
 import { LoadingComponent } from '../../loading/loading.component';
+import { MessageModalService } from '../../../Services/message-modal.service';
 
 @Component({
   selector: 'app-edit-category',
@@ -32,7 +33,8 @@ export class EditCategoryComponent {
     private efb: EnhancedFormBuilderService,
     private modal: ModalNavigateService,
     private categoryService: CategoryService,
-    private currentLocation: Location
+    private currentLocation: Location,
+    private messageService: MessageModalService
   ) {}
 
   ngOnInit() {
@@ -88,8 +90,12 @@ export class EditCategoryComponent {
     }
   }
 
-  onDelete() {
-    if (confirm('هل انت متأكد من رغبتك في الغاء العيار؟')) {
+  async onDelete() {
+    var res = await this.messageService.showConfirmMessage(
+      'هل انت متأكد من رغبتك في الغاء العيار؟',
+      'تأكيد'
+    );
+    if (res) {
       this.onAccept();
     }
   }
@@ -105,7 +111,11 @@ export class EditCategoryComponent {
   }
 
   async onChangeBase() {
-    if (confirm('هل انت متأكد من اختيار هذا المعيار كأساسي؟')) {
+    var res = await this.messageService.showConfirmMessage(
+      'هل انت متأكد من اختيار هذا المعيار كأساسي؟',
+      'تأكيد'
+    );
+    if (res) {
       const response = await this.categoryService.changeBaseCategory(
         this.editCategory.Id!
       );

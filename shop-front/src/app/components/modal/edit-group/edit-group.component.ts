@@ -11,6 +11,7 @@ import { GroupService } from '../../../Services/group.service';
 import { CategoryService } from '../../../Services/category.service';
 import { LoadingComponent } from '../../loading/loading.component';
 import { GroupOutput } from '../../../interfaces/group';
+import { MessageModalService } from '../../../Services/message-modal.service';
 
 @Component({
   selector: 'app-edit-group',
@@ -34,7 +35,8 @@ export class EditGroupComponent implements OnInit {
     private modal: ModalNavigateService,
     private groupService: GroupService,
     private categoryService: CategoryService,
-    private currentLocation: Location
+    private currentLocation: Location,
+    private messageService: MessageModalService
   ) {}
 
   async ngOnInit() {
@@ -90,8 +92,12 @@ export class EditGroupComponent implements OnInit {
     this.modal.dismiss();
   }
 
-  onDelete() {
-    if (confirm('هل انت متأكد من رغبتك في الغاء المجموعة؟')) {
+  async onDelete() {
+    var res = await this.messageService.showConfirmMessage(
+      'هل انت متأكد من رغبتك في الغاء المجموعة؟',
+      'تأكيد'
+    );
+    if (res) {
       this.onAccept();
     }
   }
