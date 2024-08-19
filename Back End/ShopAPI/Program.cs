@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Shop.Authentication;
 using Shop.Authentication.Interfaces;
@@ -10,6 +11,7 @@ using Shop.DataAccess.Interfaces;
 using Shop.DataAccess.Services;
 using Shop.Models.Contracts;
 using Shop.Models.DB;
+using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -179,7 +181,14 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseFileServer();
+app.UseFileServer(new FileServerOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "browser")),
+    RequestPath = "",
+    EnableDefaultFiles = true,
+    EnableDirectoryBrowsing = false
+});
 
 app.UseRouting();
 
@@ -214,6 +223,42 @@ app.Use(async (context, next) =>
 });
 
 app.MapControllers();
+app.MapFallbackToFile("index.html");
+
+app.Use(async (context, next) =>
+        {
+            if (!context.Request.Path.Value!.StartsWith("/api"))
+            {
+                var psi = new ProcessStartInfo
+                {
+                    FileName = "node",
+                    Arguments = "wwwroot/server/main.server.mjs",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+
+                var process = Process.Start(psi);
+                var output = await process!.StandardOutput.ReadToEndAsync();
+                var error = await process.StandardError.ReadToEndAsync();
+
+                if (!string.IsNullOrEmpty(error))
+                {
+                    context.Response.StatusCode = 500;
+                    await context.Response.WriteAsync(error);
+                }
+                else
+                {
+                    context.Response.ContentType = "text/html";
+                    await context.Response.WriteAsync(output);
+                }
+            }
+            else
+            {
+                await next();
+            }
+        });
 
 app.Run();
 

@@ -1,0 +1,15 @@
+{
+  "routes": [
+    "/",
+    "/add-new-group",
+    "/add-new-product",
+    "/addNewCategory",
+    "/categories-list",
+    "/groups-list",
+    "/login",
+    "/message",
+    "/products-list",
+    "/side-bar",
+    "/signUp"
+  ]
+}
