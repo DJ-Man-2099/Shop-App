@@ -1,5 +1,5 @@
 <div class="main p-3 d-flex align-items-center justify-content-center gap-3">
-	<app-gradient-card>
+	<div class="card p-2 gap-3">
 		<form class="p-2 d-flex flex-column gap-2" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
 			@for(control of loginFormControlNames; track control.key){
 			<div class="d-flex align-items-center">
@@ -10,5 +10,5 @@
 			}
 			<button class="btn btn-primary" type="submit" [disabled]="loginForm.invalid">تسجيل الدخول</button>
 		</form>
-	</app-gradient-card>
+	</div>
 </div>

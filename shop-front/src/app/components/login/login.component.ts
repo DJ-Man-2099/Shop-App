@@ -13,12 +13,11 @@ import { AuthenticationService } from '../../Services/authentication.service';
 import { Router } from '@angular/router';
 import { MainPageComponent } from '../main-page/main-page.component';
 import { MessageModalService } from '../../Services/message-modal.service';
-import { GradientCardComponent } from '../gradient-card/gradient-card.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, GradientCardComponent],
+  imports: [FormsModule, ReactiveFormsModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
