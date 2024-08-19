@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace Shop.Models.DB;
 
+[Index(nameof(Name), nameof(CategoryId), IsUnique = true)]
 public class Group
 {
 	[Key]
