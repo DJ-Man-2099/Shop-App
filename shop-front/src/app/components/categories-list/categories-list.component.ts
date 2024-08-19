@@ -5,11 +5,12 @@ import { AddnewcategoryComponent } from '../modal/addnewcategory/addnewcategory.
 import { ModalNavigateService } from '../../Services/modal-navigate.service';
 import { EditCategoryComponent } from '../modal/edit-category/edit-category.component';
 import { AuthenticationService } from '../../Services/authentication.service';
+import { GradientCardComponent } from '../gradient-card/gradient-card.component';
 
 @Component({
   selector: 'app-categories-list',
   standalone: true,
-  imports: [],
+  imports: [GradientCardComponent],
   templateUrl: './categories-list.component.html',
   styleUrl: './categories-list.component.css',
 })

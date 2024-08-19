@@ -14,11 +14,17 @@ import {
 } from '../../Services/enhanced-form-builder.service';
 import { LoadingComponent } from '../loading/loading.component';
 import { AuthenticationService } from '../../Services/authentication.service';
+import { GradientCardComponent } from '../gradient-card/gradient-card.component';
 
 @Component({
   selector: 'app-basecategoryprice',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, LoadingComponent],
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    LoadingComponent,
+    GradientCardComponent,
+  ],
   templateUrl: './basecategoryprice.component.html',
   styleUrl: './basecategoryprice.component.css',
 })
